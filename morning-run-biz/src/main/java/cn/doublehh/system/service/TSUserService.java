@@ -19,4 +19,12 @@ public interface TSUserService extends IService<TSUser> {
      * @return
      */
     TSUser getUserWithRolesByUid(String uid);
+
+    /**
+     * 根据微信openid获取用户信息
+     *
+     * @param openid
+     * @return
+     */
+    TSUser getUserByWechatOpenId(String openid);
 }

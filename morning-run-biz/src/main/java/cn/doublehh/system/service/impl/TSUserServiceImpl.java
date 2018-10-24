@@ -3,6 +3,7 @@ package cn.doublehh.system.service.impl;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.dao.TSUserMapper;
 import cn.doublehh.system.service.TSUserService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,5 +26,11 @@ public class TSUserServiceImpl extends ServiceImpl<TSUserMapper, TSUser> impleme
     @Override
     public TSUser getUserWithRolesByUid(String uid) {
         return tsUserMapper.getUserWithRolesByUid(uid);
+    }
+
+    @Override
+    public TSUser getUserByWechatOpenId(String openid) {
+        TSUser tsUser = tsUserMapper.selectOne(new QueryWrapper<TSUser>().eq("wechat_openid", openid));
+        return tsUser;
     }
 }
