@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.doublehh.system.dao.TSRoleResourceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.doublehh.system.model.TSRoleResource">
+        <id column="id" property="id"/>
+        <result column="role_id" property="roleId"/>
+        <result column="resource_id" property="resourceId"/>
+    </resultMap>
+    <resultMap id="ResourceResultMap" type="cn.doublehh.system.model.TSResource">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="reid" property="reid" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_date" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_by" property="createBy" jdbcType="VARCHAR"/>
+        <result column="update_by" property="updateBy" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="pid" property="pid" jdbcType="VARCHAR"/>
+        <result column="value" property="value" jdbcType="VARCHAR"/>
+        <result column="leaf" property="leaf" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Resource_Column_List">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        id, reid, name, type, enabled, create_time, update_time, create_by, update_by, remark,
+        pid, value, leaf
+    </sql>
+    <insert id="addResourcesToRole">
+        INSERT INTO t_s_role_resource(id,role_id,resource_id) VALUES
+        <foreach collection="resourceIds" item="resourceIds" index="index" separator=",">
+            (UUID(),#{roleId},#{resourceIds})
+        </foreach>
+    </insert>
+    <delete id="deleteResourcesFromRole">
+        DELETE FROM t_s_role_resource WHERE role_id=#{roleId} AND resource_id IN
+        <foreach collection="resourceIds" item="resourceIds" index="index" open="(" close=")" separator=",">
+            #{resourceIds}
+        </foreach>
+    </delete>
+    <select id="getResourcesByRoleId" resultMap="ResourceResultMap">
+        SELECT
+        <include refid="Resource_Column_List"/>
+        FROM t_s_resource WHERE id IN (SELECT resource_id FROM t_s_role_resource WHERE role_id = #{roleId})
+    </select>
+</mapper>

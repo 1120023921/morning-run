@@ -1,0 +1,122 @@
+info:
+ app:
+  name: "晨跑查询系统"
+  description: "晨跑查询系统"
+  version: "1.0"
+  spring-boot-version: "2.0.4.RELEASE"
+
+spring:
+  boot:
+    admin:
+      client:
+        url: http://10.60.144.110:8788
+        instance:
+          service-base-url: http://10.60.144.10:8080
+  datasource:
+    type : com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/sports_score?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 1120023921
+    driver-class-name: com.mysql.jdbc.Driver
+#    url: jdbc:oracle:thin:@10.60.144.34:1521:ORCL
+#    username: pe
+#    password: pe
+#    driver-class-name: oracle.jdbc.driver.OracleDriver
+    # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+    filters: stat
+    # 初始化大小，最小，最大  
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    # 配置获取连接等待超时的时间  
+    maxWait: 60000
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒  
+    timeBetweenEvictionRunsMillis: 60000
+    # 配置一个连接在池中最小生存的时间，单位是毫秒  
+    minEvictableIdleTimeMillis: 300000
+    # 校验SQL，Oracle配置 validationQuery: SELECT 1 FROM DUAL，如果不配validationQuery项，则下面三项配置无用  
+    validationQuery: SELECT 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    # 打开PSCache，并且指定每个连接上PSCache的大小  
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    # 合并多个DruidDataSource的监控数据  
+    useGlobalDataSourceStat: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /morning-run
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+      health:
+        show-details: ALWAYS
+
+swagger:
+  enabled: true
+  title: 体育测试-API
+  description: 体育测试API文档
+  base-package:  cn.doublehh
+  base-path: /**
+  exclude-path: /error
+  version: 1.0
+  author: 胡昊
+
+#mybatis
+mybatis-plus:
+  mapper-locations: classpath:/cn/doublehh/*/dao/*Mapper.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: cn.doublehh.*.model
+  global-config:
+    # 数据库相关配置
+    db-config:
+      #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: UUID
+      #字段策略 IGNORED:"忽略判断",NOT_NULL:"非 NULL 判断"),NOT_EMPTY:"非空判断"
+      field-strategy: not_empty
+      #驼峰下划线转换
+      column-underline: true
+      #数据库大写下划线转换
+      #capital-mode: true
+      #逻辑删除配置
+      logic-delete-value: 0
+      logic-not-delete-value: 1
+      #字符串模糊查询
+      columnLike: false
+    #刷新mapper 调试神器
+    refresh: true
+  # 原生配置
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+  #配置JdbcTypeForNull, oracle数据库必须配置
+    jdbc-type-for-null: 'null'
+
+logging:
+  level:
+    org.springframework.web: INFO
+    cn.doublehh.wx.mp: DEBUG
+    me.chanjar.weixin: DEBUG
+    cn:
+      doublehh: debug
+
+wx:
+  mp:
+    configs:
+    - appId: wxbe3c1744c0f71ab4
+      secret: e7f35779f3f3208081474ad92e83edb9
+      token: 1120023921
+      aesKey:
+    - appId: 2222 （另一个公众号的appid，以下同上）
+      secret: 1111
+      token: 111
+      aesKey: 111
