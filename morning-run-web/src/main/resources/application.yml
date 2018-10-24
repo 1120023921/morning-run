@@ -12,6 +12,12 @@ spring:
         url: http://10.60.144.110:8788
         instance:
           service-base-url: http://10.60.144.10:8080
+  thymeleaf:
+    prefix: classpath:/templates/
+    cache: false
+    mode: LEGACYHTML5
+  mvc:
+    static-path-pattern: /**
   datasource:
     type : com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://localhost:3306/sports_score?useUnicode=true&characterEncoding=utf-8

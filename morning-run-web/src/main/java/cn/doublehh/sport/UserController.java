@@ -5,6 +5,7 @@ import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
 import cn.doublehh.wx.mp.config.WxMpConfiguration;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
 import io.swagger.annotations.Api;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 
 /**
  * @author 胡昊
@@ -46,18 +48,24 @@ public class UserController {
     /**
      * 绑定微信openid
      *
-     * @param uid
-     * @param session
+     * @param jobNumber
+     * @param name
+     * @param openid
      * @return
      */
     @ApiOperation(value = "绑定微信openid", httpMethod = "PATCH")
     @RequestMapping(value = "/addUserOpenId", method = RequestMethod.PATCH)
-    public R addUserOpenId(String uid, HttpSession session) {
+    public R addUserOpenId(String jobNumber, String name, String openid) {
         ErrorCode errorCode = new ErrorCode();
-        String wechatOpenId = (String) session.getAttribute("wechatOpenId");
-        TSUser tsUser = new TSUser();
-        tsUser.setWechatOpenid(wechatOpenId);
-        boolean res = tsUserService.update(tsUser, new UpdateWrapper<TSUser>().eq("uid", uid));
+        TSUser tsUser = tsUserService.getOne(new QueryWrapper<TSUser>().eq("uid", jobNumber).eq("name", name));
+        if (null == tsUser) {
+            errorCode.setCode(ErrorCode.NOT_FOUND);
+            errorCode.setMsg("用户信息不存在，请检查后重新输入");
+            return R.restResult(null, errorCode);
+        }
+        tsUser.setWechatOpenid(openid);
+        tsUser.setUpdateTime(LocalDateTime.now());
+        boolean res = tsUserService.updateById(tsUser);
         if (res) {
             errorCode.setCode(ErrorCode.OK);
             errorCode.setMsg(ErrorCode.OK_MSG);
