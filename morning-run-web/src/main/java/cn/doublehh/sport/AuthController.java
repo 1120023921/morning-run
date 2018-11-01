@@ -27,6 +27,8 @@ public class AuthController {
 
     @Autowired
     private TSUserService tsUserService;
+    @Autowired
+    private GradeViewController gradeViewController;
 
     @RequestMapping("/login")
     public String login(@PathVariable String appid, @RequestParam String code, String state, ModelMap map) throws WxErrorException {
@@ -40,9 +42,9 @@ public class AuthController {
                 map.put("openid", wxMpUser.getOpenId());
                 return "bindInfo";
             } else {
-
+                return gradeViewController.getGradeByJobNumber(user.getUid(), map);
             }
-        }catch (WxErrorException e){
+        } catch (WxErrorException e) {
             e.printStackTrace();
         }
         return "/error";

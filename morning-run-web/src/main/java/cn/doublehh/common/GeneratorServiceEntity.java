@@ -20,19 +20,19 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 public class GeneratorServiceEntity {
 
     public static void main(String[] srgs) {
-        String packageName = "cn.doublehh.system";
+        String packageName = "cn.doublehh.sport";
         boolean serviceNameStartWithI = false;//user -> UserService, 设置成true: user -> IUserService
-        generateByTables(serviceNameStartWithI, packageName, "t_s_user","t_s_role","t_s_resource","t_s_role_resource","t_s_user_role");
+        generateByTables(serviceNameStartWithI, packageName, "grade_view");
     }
 
     private static void generateByTables(boolean serviceNameStartWithI, String packageName, String... tableNames) {
         GlobalConfig config = new GlobalConfig();
-        String dbUrl = "jdbc:mysql://10.60.144.108:3306/plastic";
+        String dbUrl = "jdbc:mysql://localhost:3306/sports_score";
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         dataSourceConfig.setDbType(DbType.MYSQL)
                 .setUrl(dbUrl)
-                .setUsername("doubleh")
-                .setPassword("123321")
+                .setUsername("root")
+                .setPassword("1120023921")
                 .setDriverName("com.mysql.jdbc.Driver");
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig
@@ -46,7 +46,7 @@ public class GeneratorServiceEntity {
         config.setActiveRecord(false)
                 .setBaseResultMap(true)
                 .setAuthor("胡昊")
-                .setOutputDir("F:\\IDEASpace\\base\\base-biz\\src\\main\\java")
+                .setOutputDir("C:\\Project\\morning-run\\morning-run-biz\\src\\main\\java")
                 .setFileOverride(false);
         if (!serviceNameStartWithI) {
             config.setServiceName("%sService");
