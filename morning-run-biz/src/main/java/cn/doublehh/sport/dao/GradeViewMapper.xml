@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.doublehh.sport.dao.GradeViewMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.doublehh.sport.model.GradeView">
+        <result column="name" property="name" />
+        <result column="id" property="id" />
+        <result column="job_number" property="jobNumber" />
+        <result column="item_number" property="itemNumber" />
+        <result column="type" property="type" />
+        <result column="grade" property="grade" />
+        <result column="create_time" property="createTime" />
+        <result column="grade_number" property="gradeNumber" />
+        <result column="item_name" property="itemName" />
+    </resultMap>
+
+</mapper>
