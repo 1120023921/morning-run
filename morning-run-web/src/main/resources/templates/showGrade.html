@@ -20,9 +20,8 @@
             <p class="weui-media-box__desc" th:text="'成绩：'+${oneGrade.grade}"></p>
             <ul class="weui-media-box__info">
                 <li class="weui-media-box__info__meta" th:text="${oneGrade.job_number}"></li>
-                <li class="weui-media-box__info__meta"
-                    th:text="${#dates.format(oneGrade.create_time, 'yyyy-MM-dd HH:mm:ss')}"></li>
-                <!--<li class="weui-media-box__info__meta weui-media-box__info__meta_extra">其它信息</li>-->
+                <li class="weui-media-box__info__meta" th:text="${oneGrade.create_time}"></li>
+                <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">其它信息</li>
             </ul>
         </div>
     </div>
@@ -52,6 +51,16 @@
                 alert("未知错误");
             }
         });
+    }
+
+    function transferTime(str) {
+        let year = str.substring(0, 4);
+        let month = str.substring(4, 6);
+        let day = str.substring(6, 8);
+        let hour = str.substring(8, 10);
+        let minute = str.substring(10, 12);
+        let second = str.substring(12, 14);
+        return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second
     }
 </script>
 </html>

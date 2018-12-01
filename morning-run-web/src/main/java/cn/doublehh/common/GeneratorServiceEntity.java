@@ -46,7 +46,7 @@ public class GeneratorServiceEntity {
         config.setActiveRecord(false)
                 .setBaseResultMap(true)
                 .setAuthor("胡昊")
-                .setOutputDir("C:\\Project\\morning-run\\morning-run-biz\\src\\main\\java")
+                .setOutputDir("F:\\IDEASpace\\morning-run\\morning-run-biz\\src\\main\\java")
                 .setFileOverride(false);
         if (!serviceNameStartWithI) {
             config.setServiceName("%sService");

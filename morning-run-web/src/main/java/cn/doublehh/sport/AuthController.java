@@ -1,9 +1,10 @@
 package cn.doublehh.sport;
 
+import cn.doublehh.sport.service.GradeViewService;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
 import cn.doublehh.wx.mp.config.WxMpConfiguration;
-import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * @author 胡昊
@@ -22,13 +25,13 @@ import org.springframework.web.servlet.ModelAndView;
  * Create: DoubleH
  */
 @Controller
-@RequestMapping("/auth/{appid}")
+@RequestMapping("/wx/auth/{appid}")
 public class AuthController {
 
     @Autowired
     private TSUserService tsUserService;
     @Autowired
-    private GradeViewController gradeViewController;
+    private GradeViewService gradeViewService;
 
     @RequestMapping("/login")
     public String login(@PathVariable String appid, @RequestParam String code, String state, ModelMap map) throws WxErrorException {
@@ -42,7 +45,8 @@ public class AuthController {
                 map.put("openid", wxMpUser.getOpenId());
                 return "bindInfo";
             } else {
-                return gradeViewController.getGradeByJobNumber(user.getUid(), map);
+                map.put("gradess", gradeViewService.getGradeByJobNumber(user.getUid()).getRecords());
+                return "showGrade";
             }
         } catch (WxErrorException e) {
             e.printStackTrace();

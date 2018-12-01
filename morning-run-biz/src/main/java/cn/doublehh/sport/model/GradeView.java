@@ -8,16 +8,11 @@ import java.io.Serializable;
  * </p>
  *
  * @author 胡昊
- * @since 2018-10-25
+ * @since 2018-12-01
  */
 public class GradeView implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 姓名
-     */
-    private String name;
 
     /**
      * id
@@ -30,14 +25,14 @@ public class GradeView implements Serializable {
     private String jobNumber;
 
     /**
-     * 项目
+     * 考勤机编号
      */
-    private Integer itemNumber;
+    private String deviceNumber;
 
     /**
-     * 类别
+     * 时间
      */
-    private Integer type;
+    private String createTime;
 
     /**
      * 成绩
@@ -45,28 +40,25 @@ public class GradeView implements Serializable {
     private String grade;
 
     /**
-     * 时间
-     */
-    private Long createTime;
-
-    /**
-     * 编号
-     */
-    private Integer gradeNumber;
-
-    /**
      * 项目名称
      */
     private String itemName;
 
+    /**
+     * 姓名
+     */
+    private String name;
 
-    public String getName() {
-        return name;
-    }
+    /**
+     * 项目
+     */
+    private String itemNumber;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    /**
+     * 类别
+     */
+    private String type;
+
 
     public String getId() {
         return id;
@@ -84,20 +76,20 @@ public class GradeView implements Serializable {
         this.jobNumber = jobNumber;
     }
 
-    public Integer getItemNumber() {
-        return itemNumber;
+    public String getDeviceNumber() {
+        return deviceNumber;
     }
 
-    public void setItemNumber(Integer itemNumber) {
-        this.itemNumber = itemNumber;
+    public void setDeviceNumber(String deviceNumber) {
+        this.deviceNumber = deviceNumber;
     }
 
-    public Integer getType() {
-        return type;
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
     public String getGrade() {
@@ -108,22 +100,6 @@ public class GradeView implements Serializable {
         this.grade = grade;
     }
 
-    public Long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Long createTime) {
-        this.createTime = createTime;
-    }
-
-    public Integer getGradeNumber() {
-        return gradeNumber;
-    }
-
-    public void setGradeNumber(Integer gradeNumber) {
-        this.gradeNumber = gradeNumber;
-    }
-
     public String getItemName() {
         return itemName;
     }
@@ -132,18 +108,42 @@ public class GradeView implements Serializable {
         this.itemName = itemName;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getItemNumber() {
+        return itemNumber;
+    }
+
+    public void setItemNumber(String itemNumber) {
+        this.itemNumber = itemNumber;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "GradeView{" +
-        "name=" + name +
-        ", id=" + id +
+        "id=" + id +
         ", jobNumber=" + jobNumber +
+        ", deviceNumber=" + deviceNumber +
+        ", createTime=" + createTime +
+        ", grade=" + grade +
+        ", itemName=" + itemName +
+        ", name=" + name +
         ", itemNumber=" + itemNumber +
         ", type=" + type +
-        ", grade=" + grade +
-        ", createTime=" + createTime +
-        ", gradeNumber=" + gradeNumber +
-        ", itemName=" + itemName +
         "}";
     }
 }
