@@ -13,6 +13,8 @@
         <result column="name" property="name" />
         <result column="item_number" property="itemNumber" />
         <result column="type" property="type" />
+        <result column="semester" property="semester" />
+        <result column="weight" property="weight" />
     </resultMap>
 
 </mapper>

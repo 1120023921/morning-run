@@ -1,5 +1,6 @@
 package cn.doublehh.sport.model;
 
+import java.time.LocalDateTime;
 import java.io.Serializable;
 
 /**
@@ -30,9 +31,9 @@ public class GradeView implements Serializable {
     private String deviceNumber;
 
     /**
-     * 时间
+     * 创建时间
      */
-    private String createTime;
+    private LocalDateTime createTime;
 
     /**
      * 成绩
@@ -59,6 +60,16 @@ public class GradeView implements Serializable {
      */
     private String type;
 
+    /**
+     * 学期
+     */
+    private String semester;
+
+    /**
+     * 权重
+     */
+    private Integer weight;
+
 
     public String getId() {
         return id;
@@ -84,11 +95,11 @@ public class GradeView implements Serializable {
         this.deviceNumber = deviceNumber;
     }
 
-    public String getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
 
@@ -132,6 +143,22 @@ public class GradeView implements Serializable {
         this.type = type;
     }
 
+    public String getSemester() {
+        return semester;
+    }
+
+    public void setSemester(String semester) {
+        this.semester = semester;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
     @Override
     public String toString() {
         return "GradeView{" +
@@ -144,6 +171,8 @@ public class GradeView implements Serializable {
         ", name=" + name +
         ", itemNumber=" + itemNumber +
         ", type=" + type +
+        ", semester=" + semester +
+        ", weight=" + weight +
         "}";
     }
 }

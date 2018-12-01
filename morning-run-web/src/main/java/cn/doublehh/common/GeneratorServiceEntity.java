@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import org.junit.jupiter.api.Test;
 
 /**
  * <p>
@@ -19,7 +20,9 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
  */
 public class GeneratorServiceEntity {
 
-    public static void main(String[] srgs) {
+
+    @Test
+    public void generate() {
         String packageName = "cn.doublehh.sport";
         boolean serviceNameStartWithI = false;//user -> UserService, 设置成true: user -> IUserService
         generateByTables(serviceNameStartWithI, packageName, "grade_view");

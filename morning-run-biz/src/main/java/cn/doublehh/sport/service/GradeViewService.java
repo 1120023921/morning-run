@@ -1,10 +1,9 @@
 package cn.doublehh.sport.service;
 
 import cn.doublehh.sport.model.GradeView;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springframework.ui.ModelMap;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,5 +16,12 @@ import java.util.Map;
  */
 public interface GradeViewService extends IService<GradeView> {
 
-    IPage<Map<String, Object>> getGradeByJobNumber(String jobNumber);
+    /**
+     * 分类获取学生成绩
+     *
+     * @param jobNumber 学号
+     * @param type      类别名称
+     * @return
+     */
+    Map<String, List<GradeView>> getGradeByJobNumberAndType(String jobNumber, String type);
 }
