@@ -6,6 +6,7 @@ import cn.doublehh.common.pojo.ErrorCodeInfo;
 import cn.doublehh.sport.model.GradeParams;
 import cn.doublehh.sport.model.GradeView;
 import cn.doublehh.sport.service.GradeViewService;
+import cn.doublehh.sport.vo.AttendanceVo;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
 import cn.doublehh.wx.mp.config.WxMpConfiguration;
@@ -28,9 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>
- * VIEW 前端控制器
- * </p>
+ * 成绩查询
  *
  * @author 胡昊
  * @since 2018-10-25
@@ -44,11 +43,31 @@ public class GradeViewController extends BaseController<GradeView> {
     @Autowired
     private GradeViewService gradeViewService;
 
+    /**
+     * 获取体质测试成绩
+     *
+     * @param gradeParams 查询条件对象
+     * @return
+     */
     @RequestMapping(value = "/getGradeByJobNumberAndType", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public R<Map<String, List<GradeView>>> getGradeByJobNumberAndType(@RequestBody GradeParams gradeParams) {
         Map<String, List<GradeView>> gradeList = gradeViewService.getGradeByJobNumberAndType(gradeParams.getJobNumber(), gradeParams.getType());
         return R.restResult(gradeList, ErrorCodeInfo.SUCCESS);
+
+    }
+
+    /**
+     * 获取体教考勤成绩
+     *
+     * @param gradeParams 查询条件对象
+     * @return
+     */
+    @RequestMapping(value = "/getAttendanceVo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public R<Map<String, List<AttendanceVo>>> getAttendanceVo(@RequestBody GradeParams gradeParams) {
+        Map<String, List<AttendanceVo>> attendanceList = gradeViewService.getAttendanceVo(gradeParams.getJobNumber(), gradeParams.getType());
+        return R.restResult(attendanceList, ErrorCodeInfo.SUCCESS);
     }
 
 //    @RequestMapping("/showGrade")

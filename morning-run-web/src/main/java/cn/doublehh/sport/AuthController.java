@@ -42,7 +42,7 @@ public class AuthController {
                 return "bindInfo";
             } else {
 //                map.put("gradess", gradeViewService.getGradeByJobNumber(user.getUid()).getRecords());
-                return "redirect:http://192.168.199.176:8081/#/?jobNumber=" + user.getUid();
+                return "redirect:http://192.168.199.217:8081/#/?jobNumber=" + user.getUid();
             }
         } catch (WxErrorException e) {
             e.printStackTrace();
