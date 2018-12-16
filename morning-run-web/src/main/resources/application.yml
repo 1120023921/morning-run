@@ -114,6 +114,7 @@ logging:
     me.chanjar.weixin: DEBUG
     cn:
       doublehh: debug
+  path: logs
 
 wx:
   mp:

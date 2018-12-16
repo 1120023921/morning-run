@@ -25,7 +25,7 @@ public class GeneratorServiceEntity {
     public void generate() {
         String packageName = "cn.doublehh.sport";
         boolean serviceNameStartWithI = false;//user -> UserService, 设置成true: user -> IUserService
-        generateByTables(serviceNameStartWithI, packageName, "grade_view");
+        generateByTables(serviceNameStartWithI, packageName, "grade");
     }
 
     private static void generateByTables(boolean serviceNameStartWithI, String packageName, String... tableNames) {

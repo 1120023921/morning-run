@@ -3,8 +3,10 @@ package cn.doublehh.sport;
 
 import cn.doublehh.common.controller.BaseController;
 import cn.doublehh.common.pojo.ErrorCodeInfo;
+import cn.doublehh.sport.model.Grade;
 import cn.doublehh.sport.model.GradeParams;
 import cn.doublehh.sport.model.GradeView;
+import cn.doublehh.sport.service.GradeService;
 import cn.doublehh.sport.service.GradeViewService;
 import cn.doublehh.sport.vo.AttendanceVo;
 import cn.doublehh.system.model.TSUser;
@@ -18,15 +20,22 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 成绩查询
@@ -38,10 +47,13 @@ import java.util.Map;
 @RequestMapping("/wx/auth/{appid}/gradeView/")
 public class GradeViewController extends BaseController<GradeView> {
 
+    private static final Logger logger = LoggerFactory.getLogger(GradeViewController.class);
     @Autowired
     private TSUserService tsUserService;
     @Autowired
     private GradeViewService gradeViewService;
+    @Autowired
+    private GradeService gradeService;
 
     /**
      * 获取体质测试成绩
@@ -50,7 +62,6 @@ public class GradeViewController extends BaseController<GradeView> {
      * @return
      */
     @RequestMapping(value = "/getGradeByJobNumberAndType", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
     public R<Map<String, List<GradeView>>> getGradeByJobNumberAndType(@RequestBody GradeParams gradeParams) {
         Map<String, List<GradeView>> gradeList = gradeViewService.getGradeByJobNumberAndType(gradeParams.getJobNumber(), gradeParams.getType());
         return R.restResult(gradeList, ErrorCodeInfo.SUCCESS);
@@ -64,7 +75,6 @@ public class GradeViewController extends BaseController<GradeView> {
      * @return
      */
     @RequestMapping(value = "/getAttendanceVo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
     public R<Map<String, List<AttendanceVo>>> getAttendanceVo(@RequestBody GradeParams gradeParams) {
         Map<String, List<AttendanceVo>> attendanceList = gradeViewService.getAttendanceVo(gradeParams.getJobNumber(), gradeParams.getType());
         return R.restResult(attendanceList, ErrorCodeInfo.SUCCESS);

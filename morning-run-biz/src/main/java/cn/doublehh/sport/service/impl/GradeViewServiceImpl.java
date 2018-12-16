@@ -6,6 +6,8 @@ import cn.doublehh.sport.service.GradeViewService;
 import cn.doublehh.sport.vo.AttendanceVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,11 +28,13 @@ import java.util.stream.Collectors;
 @Service
 public class GradeViewServiceImpl extends ServiceImpl<GradeViewMapper, GradeView> implements GradeViewService {
 
+    private static final Logger logger = LoggerFactory.getLogger(GradeViewServiceImpl.class);
     @Autowired
     private GradeViewMapper gradeViewMapper;
 
     @Override
     public Map<String, List<GradeView>> getGradeByJobNumberAndType(String jobNumber, String type) {
+        logger.info("GradeViewServiceImpl [getGradeByJobNumberAndType] 获取成绩 jobNumber=" + jobNumber + " type=" + type);
         QueryWrapper<GradeView> queryWrapper = new QueryWrapper<GradeView>()
                 .eq("job_number", jobNumber)
                 .eq("type", type);
@@ -41,6 +45,7 @@ public class GradeViewServiceImpl extends ServiceImpl<GradeViewMapper, GradeView
 
     @Override
     public Map<String, List<AttendanceVo>> getAttendanceVo(String jobNumber, String type) {
+        logger.info("GradeViewServiceImpl [getGradeByJobNumberAndType] 获取体教考勤 jobNumber=" + jobNumber + " type=" + type);
         List<AttendanceVo> attendanceVoList = gradeViewMapper.getAttendanceVo(jobNumber, type);
         Map<String, List<AttendanceVo>> listMap = attendanceVoList.stream().collect(Collectors.groupingBy(AttendanceVo::getSemester));
         return sortMapByKey(listMap);
