@@ -4,18 +4,57 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="cn.doublehh.sport.model.Grade">
-        <id column="id" property="id" />
-        <result column="job_number" property="jobNumber" />
-        <result column="item_number" property="itemNumber" />
-        <result column="type" property="type" />
-        <result column="grade" property="grade" />
-        <result column="grade_create_time" property="gradeCreateTime" />
-        <result column="device_number" property="deviceNumber" />
-        <result column="semester_id" property="semesterId" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
-        <result column="version" property="version" />
-        <result column="is_valid" property="isValid" />
+        <id column="id" property="id"/>
+        <result column="job_number" property="jobNumber"/>
+        <result column="item_number" property="itemNumber"/>
+        <result column="type" property="type"/>
+        <result column="grade" property="grade"/>
+        <result column="grade_create_time" property="gradeCreateTime"/>
+        <result column="device_number" property="deviceNumber"/>
+        <result column="semester_id" property="semesterId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="version" property="version"/>
+        <result column="is_valid" property="isValid"/>
     </resultMap>
+    <resultMap id="GradeToGradeViewMap" type="cn.doublehh.sport.vo.GradeView">
+        <result column="id" property="id"/>
+        <result column="job_number" property="jobNumber"/>
+        <result column="device_number" property="deviceNumber"/>
+        <result column="create_time" property="createTime"/>
+        <result column="grade" property="grade"/>
+        <result column="item_number" property="itemNumber"/>
+        <result column="type" property="type"/>
+        <result column="semester_id" property="semester"/>
+    </resultMap>
+    <resultMap id="AttendanceResultMap" type="cn.doublehh.sport.vo.AttendanceVo">
+        <result column="item_number" property="itemNumber"/>
+        <result column="type" property="type"/>
+        <result column="grade" property="grade"/>
+        <result column="item_name" property="itemName"/>
+        <result column="semester" property="semester"/>
+    </resultMap>
+    <sql id="BaseSql">id, job_number, device_number, create_time, grade, item_number, type, semester_id</sql>
+    <select id="getGrade" resultMap="GradeToGradeViewMap">
+        SELECT
+        <include refid="BaseSql"/>
+        FROM grade WHERE job_number=#{jobNumber} AND type=#{type}
+    </select>
+    <select id="getAttendanceGrade" resultMap="GradeToGradeViewMap">
+        SELECT id,
+               job_number,
+               device_number,
+               create_time,
+               SUM(CAST(grade AS SIGNED)) grade,
+               item_number,
+               type,
+               semester_id
+        FROM grade
+        WHERE job_number = #{jobNumber}
+          AND type = #{type}
+        GROUP BY type,
+                 item_number,
+                 semester_id
+    </select>
 
 </mapper>

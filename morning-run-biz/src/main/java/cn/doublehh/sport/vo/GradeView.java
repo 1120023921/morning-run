@@ -1,4 +1,4 @@
-package cn.doublehh.sport.model;
+package cn.doublehh.sport.vo;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;

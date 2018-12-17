@@ -1,6 +1,5 @@
 package cn.doublehh.sport;
 
-import cn.doublehh.sport.service.GradeViewService;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
 import cn.doublehh.wx.mp.config.WxMpConfiguration;
@@ -26,8 +25,6 @@ public class AuthController {
 
     @Autowired
     private TSUserService tsUserService;
-    @Autowired
-    private GradeViewService gradeViewService;
 
     @RequestMapping("/login")
     public String login(@PathVariable String appid, @RequestParam String code, String state) throws WxErrorException {
