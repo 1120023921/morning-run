@@ -8,7 +8,6 @@ import cn.doublehh.sport.model.Semester;
 import cn.doublehh.sport.service.GradeService;
 import cn.doublehh.sport.service.ItemService;
 import cn.doublehh.sport.service.SemesterService;
-import cn.doublehh.sport.vo.AttendanceVo;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

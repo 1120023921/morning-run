@@ -6,7 +6,6 @@ import cn.doublehh.sport.model.Grade;
 import cn.doublehh.sport.model.GradeParams;
 import cn.doublehh.sport.vo.GradeView;
 import cn.doublehh.sport.service.GradeService;
-import cn.doublehh.sport.vo.AttendanceVo;
 import cn.doublehh.system.service.TSUserService;
 import com.baomidou.mybatisplus.extension.api.R;
 import lombok.extern.slf4j.Slf4j;

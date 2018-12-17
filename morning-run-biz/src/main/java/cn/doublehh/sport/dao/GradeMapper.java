@@ -1,7 +1,6 @@
 package cn.doublehh.sport.dao;
 
 import cn.doublehh.sport.model.Grade;
-import cn.doublehh.sport.vo.AttendanceVo;
 import cn.doublehh.sport.vo.GradeView;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;

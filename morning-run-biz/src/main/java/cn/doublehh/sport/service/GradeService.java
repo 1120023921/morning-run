@@ -2,7 +2,6 @@ package cn.doublehh.sport.service;
 
 import cn.doublehh.sport.model.Grade;
 import cn.doublehh.sport.vo.GradeView;
-import cn.doublehh.sport.vo.AttendanceVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
