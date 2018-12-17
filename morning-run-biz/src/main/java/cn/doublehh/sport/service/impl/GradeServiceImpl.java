@@ -2,6 +2,7 @@ package cn.doublehh.sport.service.impl;
 
 import cn.doublehh.sport.model.Grade;
 import cn.doublehh.sport.dao.GradeMapper;
+import cn.doublehh.sport.vo.AttendanceGradeDetailParam;
 import cn.doublehh.sport.vo.GradeView;
 import cn.doublehh.sport.model.Item;
 import cn.doublehh.sport.model.Semester;
@@ -46,18 +47,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     public Map<String, List<GradeView>> getGradeByJobNumberAndType(String jobNumber, String type) {
         log.info("GradeViewServiceImpl [getGradeByJobNumberAndType] 获取成绩 jobNumber=" + jobNumber + " type=" + type);
         List<GradeView> gradeViewList = gradeMapper.getGrade(jobNumber, type);
-        gradeViewList.forEach(gradeView -> {
-            //获取学期信息
-            Semester semester = semesterService.getSemester(gradeView.getSemester());
-            gradeView.setSemester(semester.getSemester());
-            gradeView.setWeight(semester.getWeight());
-            //获取项目信息
-            Item item = itemService.getItem(gradeView.getType(), gradeView.getItemNumber());
-            gradeView.setItemName(item.getItemName());
-            //获取学生学习
-            TSUser tsUser = tsUserService.getUserWithRolesByUid(gradeView.getJobNumber());
-            gradeView.setName(tsUser.getName());
-        });
+        transferGrade(gradeViewList);
         Map<String, List<GradeView>> listMap = gradeViewList.stream().collect(Collectors.groupingBy(GradeView::getSemester));
         return sortMapByKey(listMap);
     }
@@ -66,9 +56,29 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     public Map<String, List<GradeView>> getAttendanceVo(String jobNumber, String type) {
         log.info("GradeViewServiceImpl [getGradeByJobNumberAndType] 获取体教考勤 jobNumber=" + jobNumber + " type=" + type);
         List<GradeView> gradeViewList = gradeMapper.getAttendanceGrade(jobNumber, type);
+        transferGrade(gradeViewList);
+        Map<String, List<GradeView>> listMap = gradeViewList.stream().collect(Collectors.groupingBy(GradeView::getSemester));
+        return sortMapByKey(listMap);
+    }
+
+    @Override
+    public List<GradeView> getAttendanceGradeDetail(AttendanceGradeDetailParam attendanceGradeDetailParam) {
+        log.info("GradeViewServiceImpl [getAttendanceGradeDetail] 获取体教考勤详细信息 attendanceGradeDetailParam=" + attendanceGradeDetailParam);
+        List<GradeView> attendanceGradeDetail = gradeMapper.getAttendanceGradeDetail(attendanceGradeDetailParam);
+        transferGrade(attendanceGradeDetail);
+        return attendanceGradeDetail;
+    }
+
+    /**
+     * 补全成绩信息
+     *
+     * @param gradeViewList
+     * @return
+     */
+    public List<GradeView> transferGrade(List<GradeView> gradeViewList) {
         gradeViewList.forEach(gradeView -> {
             //获取学期信息
-            Semester semester = semesterService.getSemester(gradeView.getSemester());
+            Semester semester = semesterService.getSemester(gradeView.getSemesterId());
             gradeView.setSemester(semester.getSemester());
             gradeView.setWeight(semester.getWeight());
             //获取项目信息
@@ -78,8 +88,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             TSUser tsUser = tsUserService.getUserWithRolesByUid(gradeView.getJobNumber());
             gradeView.setName(tsUser.getName());
         });
-        Map<String, List<GradeView>> listMap = gradeViewList.stream().collect(Collectors.groupingBy(GradeView::getSemester));
-        return sortMapByKey(listMap);
+        return gradeViewList;
     }
 
     public static <T> Map<String, List<T>> sortMapByKey(Map<String, List<T>> map) {

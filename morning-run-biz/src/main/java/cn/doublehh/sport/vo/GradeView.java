@@ -66,10 +66,27 @@ public class GradeView implements Serializable {
     private String semester;
 
     /**
+     * 学期id
+     */
+    private String semesterId;
+
+    /**
      * 权重
      */
     private Integer weight;
 
+    /**
+     * 考勤机记录创建时间
+     */
+    private String gradeCreateTime;
+
+    public String getGradeCreateTime() {
+        return gradeCreateTime;
+    }
+
+    public void setGradeCreateTime(String gradeCreateTime) {
+        this.gradeCreateTime = gradeCreateTime;
+    }
 
     public String getId() {
         return id;
@@ -151,6 +168,14 @@ public class GradeView implements Serializable {
         this.semester = semester;
     }
 
+    public String getSemesterId() {
+        return semesterId;
+    }
+
+    public void setSemesterId(String semesterId) {
+        this.semesterId = semesterId;
+    }
+
     public Integer getWeight() {
         return weight;
     }
@@ -162,17 +187,17 @@ public class GradeView implements Serializable {
     @Override
     public String toString() {
         return "GradeView{" +
-        "id=" + id +
-        ", jobNumber=" + jobNumber +
-        ", deviceNumber=" + deviceNumber +
-        ", createTime=" + createTime +
-        ", grade=" + grade +
-        ", itemName=" + itemName +
-        ", name=" + name +
-        ", itemNumber=" + itemNumber +
-        ", type=" + type +
-        ", semester=" + semester +
-        ", weight=" + weight +
-        "}";
+                "id=" + id +
+                ", jobNumber=" + jobNumber +
+                ", deviceNumber=" + deviceNumber +
+                ", createTime=" + createTime +
+                ", grade=" + grade +
+                ", itemName=" + itemName +
+                ", name=" + name +
+                ", itemNumber=" + itemNumber +
+                ", type=" + type +
+                ", semester=" + semester +
+                ", weight=" + weight +
+                "}";
     }
 }

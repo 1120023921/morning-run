@@ -1,6 +1,7 @@
 package cn.doublehh.sport.service;
 
 import cn.doublehh.sport.model.Grade;
+import cn.doublehh.sport.vo.AttendanceGradeDetailParam;
 import cn.doublehh.sport.vo.GradeView;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -33,4 +34,12 @@ public interface GradeService extends IService<Grade> {
      * @return
      */
     Map<String, List<GradeView>> getAttendanceVo(String jobNumber, String type);
+
+    /**
+     * 获取考勤详细信息
+     *
+     * @param attendanceGradeDetailParam 查询考勤成绩详情参数封装类
+     * @return
+     */
+    List<GradeView> getAttendanceGradeDetail(AttendanceGradeDetailParam attendanceGradeDetailParam);
 }

@@ -1,6 +1,7 @@
 package cn.doublehh.sport.dao;
 
 import cn.doublehh.sport.model.Grade;
+import cn.doublehh.sport.vo.AttendanceGradeDetailParam;
 import cn.doublehh.sport.vo.GradeView;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -34,4 +35,12 @@ public interface GradeMapper extends BaseMapper<Grade> {
      * @return
      */
     List<GradeView> getAttendanceGrade(@Param("jobNumber") String jobNumber, @Param("type") String type);
+
+    /**
+     * 获取考勤详细信息
+     *
+     * @param attendanceGradeDetailParam 查询考勤成绩详情参数封装类
+     * @return
+     */
+    List<GradeView> getAttendanceGradeDetail(AttendanceGradeDetailParam attendanceGradeDetailParam);
 }

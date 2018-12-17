@@ -25,7 +25,8 @@
         <result column="grade" property="grade"/>
         <result column="item_number" property="itemNumber"/>
         <result column="type" property="type"/>
-        <result column="semester_id" property="semester"/>
+        <result column="semester_id" property="semesterId"/>
+        <result column="grade_create_time" property="gradeCreateTime"/>
     </resultMap>
     <sql id="BaseSql">id, job_number, device_number, create_time, grade, item_number, type, semester_id</sql>
     <select id="getGrade" resultMap="GradeToGradeViewMap">
@@ -48,6 +49,23 @@
         GROUP BY type,
                  item_number,
                  semester_id
+    </select>
+    <select id="getAttendanceGradeDetail" parameterType="cn.doublehh.sport.vo.AttendanceGradeDetailParam"
+            resultType="cn.doublehh.sport.vo.GradeView">
+        SELECT id,
+               job_number,
+               device_number,
+               create_time,
+               grade_create_time,
+               CAST(grade AS SIGNED) grade,
+               semester_id,
+               item_number,
+               type
+        FROM grade
+        WHERE job_number = #{jobNumber}
+          AND semester_id = #{semesterId}
+          AND type = #{type}
+          AND item_number = #{itemNumber}
     </select>
 
 </mapper>
