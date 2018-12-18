@@ -21,7 +21,7 @@ public class ControllerExceptionHandler {
      */
     @ExceptionHandler(value = Exception.class)
     public R errorHandler(Exception e) {
-        e.printStackTrace();
+        log.error(e.getMessage(), e);
         return R.failed(e.getMessage());
     }
 
