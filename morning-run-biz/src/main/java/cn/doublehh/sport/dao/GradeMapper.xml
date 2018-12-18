@@ -28,7 +28,9 @@
         <result column="semester_id" property="semesterId"/>
         <result column="grade_create_time" property="gradeCreateTime"/>
     </resultMap>
-    <sql id="BaseSql">id, job_number, device_number, create_time, grade, item_number, type, semester_id</sql>
+    <sql id="BaseSql">id, job_number, device_number, create_time, grade_create_time, grade, item_number, type,
+        semester_id
+    </sql>
     <select id="getGrade" resultMap="GradeToGradeViewMap">
         SELECT
         <include refid="BaseSql"/>
@@ -39,6 +41,7 @@
                job_number,
                device_number,
                create_time,
+               grade_create_time,
                SUM(CAST(grade AS SIGNED)) grade,
                item_number,
                type,

@@ -12,6 +12,7 @@ import cn.doublehh.sport.service.SemesterService;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import cn.doublehh.sport.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,6 +88,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             //获取学生学习
             TSUser tsUser = tsUserService.getUserWithRolesByUid(gradeView.getJobNumber());
             gradeView.setName(tsUser.getName());
+            //转换考勤机时间
+            gradeView.setGradeCreateTime(Utils.transferDateTimeForDevice(gradeView.getGradeCreateTime()));
         });
         return gradeViewList;
     }
