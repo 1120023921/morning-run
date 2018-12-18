@@ -11,6 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 
 /**
  * @author 胡昊
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/wx/auth/{appid}")
 public class AuthController {
 
+    public static Map<String, String> openidMap = new HashMap<>();
     @Autowired
     private TSUserService tsUserService;
 
@@ -35,11 +40,11 @@ public class AuthController {
             TSUser user = tsUserService.getUserByWechatOpenId(wxMpUser.getOpenId());
             //微信未绑定跳转绑定页面
             if (user == null) {
-//                map.put("openid", wxMpUser.getOpenId());
-                return "bindInfo";
+                String token = UUID.randomUUID().toString();
+                openidMap.put(token, wxMpUser.getOpenId());
+                return "redirect:http://web.doublehh.cn:81/#/bindInfo?token=" + token;
             } else {
-//                map.put("gradess", gradeViewService.getGradeByJobNumber(user.getUid()).getRecords());
-                return "redirect:http://192.168.199.217:8081/#/?jobNumber=" + user.getUid();
+                return "redirect:http://web.doublehh.cn:81/#/?jobNumber=" + user.getUid();
             }
         } catch (WxErrorException e) {
             e.printStackTrace();

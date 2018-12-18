@@ -4,6 +4,7 @@ package cn.doublehh.sport;
 import cn.doublehh.common.pojo.ErrorCodeInfo;
 import cn.doublehh.sport.model.Grade;
 import cn.doublehh.sport.model.GradeParams;
+import cn.doublehh.sport.vo.AttendanceGradeDetailParam;
 import cn.doublehh.sport.vo.GradeView;
 import cn.doublehh.sport.service.GradeService;
 import cn.doublehh.system.service.TSUserService;
@@ -43,7 +44,7 @@ public class GradeController {
      * 获取体质测试成绩
      *
      * @param gradeParams 查询条件对象
-     * @return
+     * @return 体质测试成绩列表
      */
     @RequestMapping(value = "/getGradeByJobNumberAndType", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public R<Map<String, List<GradeView>>> getGradeByJobNumberAndType(@RequestBody GradeParams gradeParams) {
@@ -56,12 +57,24 @@ public class GradeController {
      * 获取体教考勤成绩
      *
      * @param gradeParams 查询条件对象
-     * @return
+     * @return 体教考勤成绩列表
      */
     @RequestMapping(value = "/getAttendanceVo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public R<Map<String, List<GradeView>>> getAttendanceVo(@RequestBody GradeParams gradeParams) {
         Map<String, List<GradeView>> attendanceList = gradeService.getAttendanceVo(gradeParams.getJobNumber(), gradeParams.getType());
         return R.restResult(attendanceList, ErrorCodeInfo.SUCCESS);
+    }
+
+    /**
+     * 获取体教考勤详细信息
+     *
+     * @param attendanceGradeDetailParam 查询考勤成绩详情参数封装类
+     * @return 体教考勤详细信息
+     */
+    @RequestMapping(value = "/getAttendanceGradeDetail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public R<List<GradeView>> getAttendanceGradeDetail(@RequestBody AttendanceGradeDetailParam attendanceGradeDetailParam) {
+        List<GradeView> attendanceGradeDetail = gradeService.getAttendanceGradeDetail(attendanceGradeDetailParam);
+        return R.restResult(attendanceGradeDetail, ErrorCodeInfo.SUCCESS);
     }
 
 //    @RequestMapping("/showGrade")
@@ -86,15 +99,16 @@ public class GradeController {
 //    }
 
     @RequestMapping("/test")
-    public R<Boolean> test() throws FileNotFoundException {
-        File file = new File("C:\\Users\\11200\\Desktop\\体育考勤及后台数据三个\\1718");
+    public R<Boolean> test() throws IOException {
+        File file = new File("C:\\Users\\11200\\Desktop\\体育考勤及后台数据三个\\1819");
         File[] files = file.listFiles();
         BufferedReader reader;
         Grade grade;
         boolean result;
         String line;
         List<Grade> gradeList = new ArrayList<>();
-        for(File file1:files){
+        FileWriter writer = new FileWriter("D:/2.sql");
+        for (File file1 : files) {
             FileInputStream fileInputStream = new FileInputStream(file1);
             try {
                 reader = new BufferedReader(new InputStreamReader(fileInputStream));
@@ -102,23 +116,10 @@ public class GradeController {
                     System.out.println(line);
                     String[] gradeInfo = line.split("\\|");
                     //跳过第一行
-                    if (gradeInfo[0].equals("sno")) {
+                    if (gradeInfo.length < 4 || gradeInfo[0].equals("sno")) {
                         continue;
                     }
-                    grade = new Grade();
-                    grade.setIsValid(1);
-                    grade.setVersion(1);
-                    grade.setId(UUID.randomUUID().toString());
-                    grade.setJobNumber(gradeInfo[0]);
-                    grade.setItemNumber(gradeInfo[1]);
-                    grade.setType(gradeInfo[2]);
-                    grade.setGrade(gradeInfo[3]);
-                    grade.setGradeCreateTime(gradeInfo[4]);
-                    grade.setDeviceNumber(gradeInfo[5]);
-                    grade.setCreateTime(LocalDateTime.now());
-                    grade.setUpdateTime(LocalDateTime.now());
-                    grade.setSemesterId("2");
-                    gradeList.add(grade);
+                    writer.write("INSERT INTO `grade` VALUES ('" + UUID.randomUUID().toString() + "', '" + gradeInfo[0] + "', '" + gradeInfo[1] + "', '" + gradeInfo[2] + "', '" + gradeInfo[3] + "', '" + gradeInfo[4] + "', '" + gradeInfo[5] + "', '2', '2018-12-16 22:04:33', '2018-12-16 22:04:33', 1, 1);\r\n");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -126,8 +127,9 @@ public class GradeController {
                 return R.failed("导入学生成绩失败");
             }
         }
-        result = gradeService.saveBatch(gradeList);
-        return R.restResult(result, ErrorCodeInfo.SUCCESS);
+        writer.flush();
+        writer.close();
+        return R.restResult(null, ErrorCodeInfo.SUCCESS);
     }
 
     @RequestMapping(value = "/importGrade", method = RequestMethod.POST)
@@ -143,8 +145,8 @@ public class GradeController {
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
                     String[] gradeInfo = line.split("\\|");
-                    //跳过第一行
-                    if (gradeInfo[0].equals("sno")) {
+                    //跳过第一行和不标准数据
+                    if (gradeInfo.length < 6 || gradeInfo[0].equals("sno")) {
                         continue;
                     }
                     grade = new Grade();
