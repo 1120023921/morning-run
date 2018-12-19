@@ -85,7 +85,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             //获取项目信息
             Item item = itemService.getItem(gradeView.getType(), gradeView.getItemNumber());
             gradeView.setItemName(item.getItemName());
-            //获取学生学习
+            //获取学生信息
             TSUser tsUser = tsUserService.getUserWithRolesByUid(gradeView.getJobNumber());
             gradeView.setName(tsUser.getName());
             //转换考勤机时间

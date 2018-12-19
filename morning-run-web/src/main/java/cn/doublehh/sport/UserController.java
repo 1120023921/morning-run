@@ -56,6 +56,8 @@ public class UserController {
             throw new RuntimeException("无效token");
         }
         tsUser.setWechatOpenid(openid);
+        //使用完后清理map
+        AuthController.openidMap.remove(token);
         tsUser.setUpdateTime(LocalDateTime.now());
         boolean res = tsUserService.updateById(tsUser);
         if (res) {
