@@ -7,18 +7,15 @@ import cn.doublehh.sport.model.GradeParams;
 import cn.doublehh.sport.vo.AttendanceGradeDetailParam;
 import cn.doublehh.sport.vo.GradeView;
 import cn.doublehh.sport.service.GradeService;
-import cn.doublehh.system.service.TSUserService;
 import com.baomidou.mybatisplus.extension.api.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,8 +34,6 @@ public class GradeController {
 
     @Autowired
     private GradeService gradeService;
-    @Autowired
-    private TSUserService tsUserService;
 
     /**
      * 获取体质测试成绩
@@ -50,7 +45,6 @@ public class GradeController {
     public R<Map<String, List<GradeView>>> getGradeByJobNumberAndType(@RequestBody GradeParams gradeParams) {
         Map<String, List<GradeView>> gradeList = gradeService.getGradeByJobNumberAndType(gradeParams.getJobNumber(), gradeParams.getType());
         return R.restResult(gradeList, ErrorCodeInfo.SUCCESS);
-
     }
 
     /**
@@ -78,37 +72,18 @@ public class GradeController {
         return R.restResult(attendanceGradeDetail, ErrorCodeInfo.SUCCESS);
     }
 
-//    @RequestMapping("/showGrade")
-//    public String login(@PathVariable String appid, @RequestParam String code, String state, ModelMap map) throws WxErrorException {
-//        WxMpService wxMpService = WxMpConfiguration.getMpServices().get(appid);
-//        try {
-//            WxMpOAuth2AccessToken accessToken = wxMpService.oauth2getAccessToken(code);
-//            WxMpUser wxMpUser = wxMpService.oauth2getUserInfo(accessToken, null);
-//            TSUser user = tsUserService.getUserByWechatOpenId(wxMpUser.getOpenId());
-//            //微信未绑定跳转绑定页面
-//            if (user == null) {
-//                map.put("openid", wxMpUser.getOpenId());
-//                return "bindInfo";
-//            } else {
-//                map.put("grade", gradeViewService.pageMaps(new Page<GradeView>(1, -1), new QueryWrapper<GradeView>().eq("job_number", user.getUid())).getRecords());
-//                return "showGrade";
-//            }
-//        } catch (WxErrorException e) {
-//            e.printStackTrace();
-//        }
-//        return "/error";
-//    }
-
-    @RequestMapping("/test")
-    public R<Boolean> test() throws IOException {
+    /**
+     * 将txt转换成sql
+     *
+     * @return 转换结果
+     */
+    public R<Boolean> transferTxt2Sql() throws IOException {
         File file = new File("C:\\Users\\11200\\Desktop\\体育考勤及后台数据三个\\1819");
         File[] files = file.listFiles();
         BufferedReader reader;
-        Grade grade;
-        boolean result;
         String line;
-        List<Grade> gradeList = new ArrayList<>();
         FileWriter writer = new FileWriter("D:/2.sql");
+        assert files != null;
         for (File file1 : files) {
             FileInputStream fileInputStream = new FileInputStream(file1);
             try {
@@ -133,52 +108,37 @@ public class GradeController {
         return R.restResult(null, ErrorCodeInfo.SUCCESS);
     }
 
+    /**
+     * 成绩导入
+     *
+     * @param multipartFiles 成绩文件
+     * @param semester       学期
+     * @return 导入结果
+     */
     @RequestMapping(value = "/importGrade", method = RequestMethod.POST)
-    @Transactional()
     public R<Boolean> importGrade(MultipartFile[] multipartFiles, String semester) {
         Assert.hasText(semester, "学期不能为空");
         Assert.notEmpty(multipartFiles, "文件不能为空");
         BufferedReader reader;
-        String line;
         List<Grade> gradeList = new ArrayList<>();
-        Grade grade;
-        boolean result = false;
+        boolean result;
         for (MultipartFile multipartFile : multipartFiles) {
+            String fileType = multipartFile.getOriginalFilename().substring(Objects.requireNonNull(multipartFile.getOriginalFilename()).indexOf('.') + 1);
+            if (!"txt".equals(fileType)) {
+                throw new RuntimeException("请选择txt格式的文件上传");
+            }
             try {
                 reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()));
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                    String[] gradeInfo = line.split("\\|");
-                    //跳过第一行和不标准数据
-                    if (gradeInfo.length < 6 || gradeInfo[0].equals("sno")) {
-                        continue;
-                    }
-                    grade = new Grade();
-                    grade.setIsValid(1);
-                    grade.setVersion(1);
-                    grade.setId(UUID.randomUUID().toString());
-                    grade.setJobNumber(gradeInfo[0]);
-                    grade.setItemNumber(gradeInfo[1]);
-                    grade.setType(gradeInfo[2]);
-                    grade.setGrade(gradeInfo[3]);
-                    grade.setGradeCreateTime(gradeInfo[4]);
-                    grade.setDeviceNumber(gradeInfo[5]);
-                    grade.setCreateTime(LocalDateTime.now());
-                    grade.setUpdateTime(LocalDateTime.now());
-                    grade.setSemesterId(semester);
-                    gradeList.add(grade);
-                }
+                gradeService.uploadGrade(reader, gradeList, semester);
             } catch (Exception e) {
-                e.printStackTrace();
-                log.error("GradeViewController [importGrade]：导入学生成绩失败" + e.getMessage());
-                return R.failed("导入学生成绩失败");
+                log.error("GradeViewController [importGrade]：获取文件输入流失败" + e.getMessage());
+                return R.failed("获取文件输入流失败");
             }
         }
         try {
             result = gradeService.saveBatch(gradeList);
             return R.restResult(result, ErrorCodeInfo.SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("GradeViewController [importGrade]：导入学生成绩失败" + e.getMessage());
             return R.failed("导入学生成绩失败");
         }

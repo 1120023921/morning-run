@@ -16,11 +16,12 @@ import cn.doublehh.sport.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -70,13 +71,49 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         return attendanceGradeDetail;
     }
 
+    @Override
+    @Transactional
+    public Boolean uploadGrade(BufferedReader reader, List<Grade> gradeList, String semester) {
+        log.info("GradeViewServiceImpl [uploadGrade] 读取文件流上传至数据库");
+        String line;
+        Grade grade;
+        try {
+            while ((line = reader.readLine()) != null) {
+                String[] gradeInfo = line.split("\\|");
+                //跳过第一行和不标准数据
+                if (gradeInfo.length < 6 || gradeInfo[0].equals("sno")) {
+                    continue;
+                }
+                grade = new Grade();
+                grade.setIsValid(1);
+                grade.setVersion(1);
+                grade.setId(UUID.randomUUID().toString());
+                grade.setJobNumber(gradeInfo[0]);
+                grade.setItemNumber(gradeInfo[1]);
+                grade.setType(gradeInfo[2]);
+                grade.setGrade(gradeInfo[3]);
+                grade.setGradeCreateTime(gradeInfo[4]);
+                grade.setDeviceNumber(gradeInfo[5]);
+                grade.setCreateTime(LocalDateTime.now());
+                grade.setUpdateTime(LocalDateTime.now());
+                grade.setSemesterId(semester);
+                gradeList.add(grade);
+            }
+            reader.close();
+        } catch (IOException e) {
+            log.error("成绩上传输入流异常", e);
+            return false;
+        }
+        return true;
+    }
+
     /**
      * 补全成绩信息
      *
-     * @param gradeViewList
+     * @param gradeViewList 成绩列表
      * @return
      */
-    public List<GradeView> transferGrade(List<GradeView> gradeViewList) {
+    private void transferGrade(List<GradeView> gradeViewList) {
         gradeViewList.forEach(gradeView -> {
             //获取学期信息
             Semester semester = semesterService.getSemester(gradeView.getSemesterId());
@@ -91,7 +128,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             //转换考勤机时间
             gradeView.setGradeCreateTime(Utils.transferDateTimeForDevice(gradeView.getGradeCreateTime()));
         });
-        return gradeViewList;
     }
 
     public static <T> Map<String, List<T>> sortMapByKey(Map<String, List<T>> map) {

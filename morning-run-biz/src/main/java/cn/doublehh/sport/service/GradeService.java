@@ -5,6 +5,7 @@ import cn.doublehh.sport.vo.AttendanceGradeDetailParam;
 import cn.doublehh.sport.vo.GradeView;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.io.BufferedReader;
 import java.util.List;
 import java.util.Map;
 
@@ -42,4 +43,14 @@ public interface GradeService extends IService<Grade> {
      * @return
      */
     List<GradeView> getAttendanceGradeDetail(AttendanceGradeDetailParam attendanceGradeDetailParam);
+
+    /**
+     * 上传成绩
+     *
+     * @param reader    成绩文件的输入流
+     * @param gradeList 返回待插入的数据集合
+     * @param semester  学期
+     * @return
+     */
+    Boolean uploadGrade(BufferedReader reader, List<Grade> gradeList, String semester);
 }
