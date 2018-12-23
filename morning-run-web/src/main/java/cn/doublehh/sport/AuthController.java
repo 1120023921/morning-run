@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequestMapping("/wx/auth/{appid}")
 public class AuthController {
 
-    public static Map<String, String> openidMap = new HashMap<>();
+    static Map<String, String> openidMap = new HashMap<>();
     @Autowired
     private TSUserService tsUserService;
 

@@ -123,7 +123,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             Item item = itemService.getItem(gradeView.getType(), gradeView.getItemNumber());
             gradeView.setItemName(item.getItemName());
             //获取学生信息
-            TSUser tsUser = tsUserService.getUserWithRolesByUid(gradeView.getJobNumber());
+            TSUser tsUser = tsUserService.getUserByUid(gradeView.getJobNumber());
             gradeView.setName(tsUser.getName());
             //转换考勤机时间
             gradeView.setGradeCreateTime(Utils.transferDateTimeForDevice(gradeView.getGradeCreateTime()));
