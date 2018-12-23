@@ -13,15 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -32,7 +31,7 @@ import java.util.UUID;
  * @since 2018-12-16
  */
 @RestController
-@RequestMapping("/wx/auth/{appid}/grade")
+@RequestMapping("/grade")
 @Slf4j
 public class GradeController {
 
@@ -75,6 +74,7 @@ public class GradeController {
     @RequestMapping(value = "/getAttendanceGradeDetail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public R<List<GradeView>> getAttendanceGradeDetail(@RequestBody AttendanceGradeDetailParam attendanceGradeDetailParam) {
         List<GradeView> attendanceGradeDetail = gradeService.getAttendanceGradeDetail(attendanceGradeDetailParam);
+        attendanceGradeDetail = attendanceGradeDetail.stream().sorted(Comparator.comparing(GradeView::getGradeCreateTime).reversed()).collect(Collectors.toList());
         return R.restResult(attendanceGradeDetail, ErrorCodeInfo.SUCCESS);
     }
 
@@ -136,6 +136,8 @@ public class GradeController {
     @RequestMapping(value = "/importGrade", method = RequestMethod.POST)
     @Transactional()
     public R<Boolean> importGrade(MultipartFile[] multipartFiles, String semester) {
+        Assert.hasText(semester, "学期不能为空");
+        Assert.notEmpty(multipartFiles, "文件不能为空");
         BufferedReader reader;
         String line;
         List<Grade> gradeList = new ArrayList<>();
