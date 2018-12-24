@@ -53,4 +53,12 @@ public interface GradeService extends IService<Grade> {
      * @return
      */
     Boolean uploadGrade(BufferedReader reader, List<Grade> gradeList, String semester);
+
+    /**
+     * 上传成绩消息提醒
+     *
+     * @param gradeList 成绩列表
+     * @return 发送失败的列表
+     */
+    List<Grade> sendUploadGradeMsg(List<Grade> gradeList);
 }

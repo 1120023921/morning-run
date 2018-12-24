@@ -1,5 +1,6 @@
 package cn.doublehh.sport.service.impl;
 
+import cn.doublehh.common.constant.WechatConstant;
 import cn.doublehh.sport.model.Grade;
 import cn.doublehh.sport.dao.GradeMapper;
 import cn.doublehh.sport.vo.AttendanceGradeDetailParam;
@@ -11,16 +12,24 @@ import cn.doublehh.sport.service.ItemService;
 import cn.doublehh.sport.service.SemesterService;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
+import cn.doublehh.wx.mp.config.WxMpConfiguration;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.doublehh.sport.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
+import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,6 +53,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     private ItemService itemService;
     @Autowired
     private TSUserService tsUserService;
+    @Autowired
+    private WxMpService wxMpService;
+    @Autowired
+    private WechatConstant wechatConstant;
+    private static final DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public Map<String, List<GradeView>> getGradeByJobNumberAndType(String jobNumber, String type) {
@@ -128,6 +142,34 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             //转换考勤机时间
             gradeView.setGradeCreateTime(Utils.transferDateTimeForDevice(gradeView.getGradeCreateTime()));
         });
+    }
+
+    @Override
+    public List<Grade> sendUploadGradeMsg(List<Grade> gradeList) {
+        log.info("GradeViewServiceImpl [sendUploadGradeMsg] 发送新成绩上传提醒");
+        List<Grade> result = new LinkedList<>();
+        gradeList.forEach(grade -> {
+            TSUser tsUser = tsUserService.getUserByUid(grade.getJobNumber());
+            Assert.notNull(tsUser, "uid对应的用户不存在");
+            WxMpTemplateMessage templateMessage = WxMpTemplateMessage.builder()
+                    .toUser(tsUser.getWechatOpenid())
+                    .templateId(wechatConstant.getUploadGradeMsgId())
+                    .url(wechatConstant.getAuthUrl())
+                    .build();
+            templateMessage.addData(new WxMpTemplateData("first", "您的体育成绩有更新", "#FF0000"));
+            templateMessage.addData(new WxMpTemplateData("jobNumber", grade.getJobNumber(), "#173177"));
+            templateMessage.addData(new WxMpTemplateData("name", tsUser.getName(), "#173177"));
+            templateMessage.addData(new WxMpTemplateData("updateTime", LocalDateTime.now().format(df), "#173177"));
+            try {
+                wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
+            } catch (WxErrorException e) {
+                result.add(grade);
+            }
+        });
+        if (!CollectionUtils.isEmpty(result)) {
+            log.error("成绩更新推送消息发送失败", result);
+        }
+        return result;
     }
 
     public static <T> Map<String, List<T>> sortMapByKey(Map<String, List<T>> map) {

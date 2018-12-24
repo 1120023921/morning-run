@@ -1,5 +1,6 @@
 package cn.doublehh.sport;
 
+import cn.doublehh.common.constant.WechatConstant;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
 import cn.doublehh.wx.mp.config.WxMpConfiguration;
@@ -30,10 +31,13 @@ public class AuthController {
     static Map<String, String> openidMap = new HashMap<>();
     @Autowired
     private TSUserService tsUserService;
+    @Autowired
+    private WxMpService wxMpService;
+    @Autowired
+    private WechatConstant wechatConstant;
 
     @RequestMapping("/login")
     public String login(@PathVariable String appid, @RequestParam String code, String state) throws WxErrorException {
-        WxMpService wxMpService = WxMpConfiguration.getMpServices().get(appid);
         try {
             WxMpOAuth2AccessToken accessToken = wxMpService.oauth2getAccessToken(code);
             WxMpUser wxMpUser = wxMpService.oauth2getUserInfo(accessToken, null);
@@ -42,9 +46,9 @@ public class AuthController {
             if (user == null) {
                 String token = UUID.randomUUID().toString();
                 openidMap.put(token, wxMpUser.getOpenId());
-                return "redirect:http://web.doublehh.cn:81/#/bindInfo?token=" + token;
+                return "redirect:" + wechatConstant.getDomainWeb() + "/#/bindInfo?token=" + token;
             } else {
-                return "redirect:http://web.doublehh.cn:81/#/?jobNumber=" + user.getUid();
+                return "redirect:" + wechatConstant.getDomainWeb() + "/#/?jobNumber=" + user.getUid();
             }
         } catch (WxErrorException e) {
             e.printStackTrace();

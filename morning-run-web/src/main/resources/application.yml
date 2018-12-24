@@ -129,6 +129,7 @@ wx:
       aesKey: 111
   templateId:
     uploadGradeMsgId: eZjSG_JJUgXDKc0jWBjpNruoe1dYQkjZaDgdP9gZb6Q
-  domain: http://doublehh.cn:8082
+  domain: http://pch.doublehh.cn:81
+  domain-web: http://web.doublehh.cn:81
   url:
     authUrl: https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base&state=login#wechat_redirect

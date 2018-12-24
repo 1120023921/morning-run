@@ -2,7 +2,6 @@ package cn.doublehh.sport;
 
 
 import cn.doublehh.common.pojo.ErrorCodeInfo;
-import cn.doublehh.service.IWxService;
 import cn.doublehh.sport.model.Grade;
 import cn.doublehh.sport.model.GradeParams;
 import cn.doublehh.sport.vo.AttendanceGradeDetailParam;
@@ -35,8 +34,6 @@ public class GradeController {
 
     @Autowired
     private GradeService gradeService;
-    @Autowired
-    private IWxService wxService;
 
     /**
      * 获取体质测试成绩
@@ -142,7 +139,7 @@ public class GradeController {
             result = gradeService.saveBatch(gradeList);
             //成绩全部导入成功开始发送消息推送
             if (result) {
-                new Thread(() -> wxService.sendUploadGradeMsg(gradeList)).run();
+                new Thread(() -> gradeService.sendUploadGradeMsg(gradeList)).run();
             }
             return R.restResult(result, ErrorCodeInfo.SUCCESS);
         } catch (Exception e) {
