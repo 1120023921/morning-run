@@ -3,6 +3,9 @@ package cn.doublehh.system.service;
 import cn.doublehh.system.model.TSUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.io.InputStream;
+import java.util.List;
+
 /**
  * <p>
  * 服务类
@@ -35,4 +38,12 @@ public interface TSUserService extends IService<TSUser> {
      * @return
      */
     TSUser getUserByUid(String uid);
+
+    /**
+     * 导入学生信息
+     *
+     * @param in 文件输入流
+     * @return 导入结果
+     */
+    Boolean importStudentInfo(InputStream in);
 }

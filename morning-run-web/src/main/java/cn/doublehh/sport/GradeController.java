@@ -116,7 +116,7 @@ public class GradeController {
      * @return 导入结果
      */
     @RequestMapping(value = "/importGrade", method = RequestMethod.POST)
-    public R<Boolean> importGrade(MultipartFile[] multipartFiles, String semester) {
+    public R importGrade(MultipartFile[] multipartFiles, String semester) {
         Assert.hasText(semester, "学期不能为空");
         Assert.notEmpty(multipartFiles, "文件不能为空");
         BufferedReader reader;
@@ -132,7 +132,7 @@ public class GradeController {
                 gradeService.uploadGrade(reader, gradeList, semester);
             } catch (Exception e) {
                 log.error("GradeViewController [importGrade]：获取文件输入流失败" + e.getMessage());
-                return R.failed("获取文件输入流失败");
+                return R.restResult("获取文件输入流失败", ErrorCodeInfo.FAILED);
             }
         }
         try {
@@ -144,7 +144,7 @@ public class GradeController {
             return R.restResult(result, ErrorCodeInfo.SUCCESS);
         } catch (Exception e) {
             log.error("GradeViewController [importGrade]：导入学生成绩失败" + e.getMessage());
-            return R.failed("导入学生成绩失败");
+            return R.restResult("导入学生成绩失败", ErrorCodeInfo.FAILED);
         }
     }
 }

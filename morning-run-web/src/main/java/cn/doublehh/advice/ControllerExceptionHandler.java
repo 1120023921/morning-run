@@ -1,5 +1,6 @@
 package cn.doublehh.advice;
 
+import cn.doublehh.common.pojo.ErrorCodeInfo;
 import com.baomidou.mybatisplus.extension.api.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,7 +23,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public R errorHandler(Exception e) {
         log.error(e.getMessage(), e);
-        return R.failed(e.getMessage());
+        return R.restResult(e.getMessage(), ErrorCodeInfo.FAILED);
     }
 
 }
