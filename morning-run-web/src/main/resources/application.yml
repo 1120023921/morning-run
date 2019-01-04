@@ -133,3 +133,10 @@ wx:
   domain-web: http://web.doublehh.cn:81
   url:
     authUrl: https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base&state=login#wechat_redirect
+
+cos:
+  secretId: AKID9FE3cwq4kGbhGcKQxFFz1vc5LM7vAzEH
+  secretKey: FI7hlZNMVQ8chdJ2e1kGYcaI25sQiRvI
+  bucket: ap-guangzhou
+  bucketName: pe-1252783006
+  resourcesUrl: https://pe-1252783006.cos.ap-guangzhou.myqcloud.com/
