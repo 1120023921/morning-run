@@ -1,5 +1,6 @@
 package cn.doublehh.sport;
 
+import cn.doublehh.common.annotation.NeedPermission;
 import cn.doublehh.common.pojo.ErrorCodeInfo;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
@@ -78,6 +79,7 @@ public class UserController {
      * @param multipartFile 学生信息Excel
      * @return
      */
+    @NeedPermission
     @ApiOperation(value = "导入学生信息", httpMethod = "POST")
     @RequestMapping(value = "/importStudentInfo", method = RequestMethod.POST)
     public R importStudentInfo(MultipartFile multipartFile) {

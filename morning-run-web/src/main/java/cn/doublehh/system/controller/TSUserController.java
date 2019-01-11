@@ -1,6 +1,7 @@
 package cn.doublehh.system.controller;
 
 
+import cn.doublehh.common.annotation.NeedPermission;
 import cn.doublehh.common.controller.BaseController;
 import cn.doublehh.common.pojo.ErrorCode;
 import cn.doublehh.system.model.TSUser;
@@ -41,6 +42,7 @@ public class TSUserController extends BaseController<TSUser> {
      * @param userRolePojo
      * @return
      */
+    @NeedPermission
     @ApiOperation(value = "给用户分配角色", notes = "给用户分配角色", httpMethod = "POST")
     @RequestMapping(value = "/addRolesToUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -62,6 +64,7 @@ public class TSUserController extends BaseController<TSUser> {
      * @param userRolePojo
      * @return
      */
+    @NeedPermission
     @ApiOperation(value = "从用户中移除角色", notes = "从用户中移除角色", httpMethod = "DELETE")
     @RequestMapping(value = "/deleteRolesFromUser", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -77,16 +80,17 @@ public class TSUserController extends BaseController<TSUser> {
         return R.restResult(null, errorCode);
     }
 
-
     @ApiOperation(value = "获取用户信息带角色信息")
     @RequestMapping(value = "/getTSUserWithRoles/{userId}", method = RequestMethod.GET)
     public R getTSUserWithRoles(@PathVariable("userId") String userId) {
         TSUser user = tsUserService.getUserWithRolesByUid(userId);
+        TSUser resUser = new TSUser();
+        resUser.setUid(user.getUid());
+        resUser.setRoles(user.getRoles());
         ErrorCode errorCode = new ErrorCode();
         errorCode.setCode(ErrorCode.OK);
         errorCode.setMsg(ErrorCode.OK_MSG);
-        return R.restResult(user, errorCode);
+        return R.restResult(resUser, errorCode);
     }
-
 }
 

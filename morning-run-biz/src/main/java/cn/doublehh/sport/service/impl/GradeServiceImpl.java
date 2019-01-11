@@ -33,6 +33,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.comparingLong;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
+
 /**
  * <p>
  * 服务实现类
@@ -148,6 +153,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     public List<Grade> sendUploadGradeMsg(List<Grade> gradeList) {
         log.info("GradeViewServiceImpl [sendUploadGradeMsg] 发送新成绩上传提醒");
         List<Grade> result = new LinkedList<>();
+        gradeList = gradeList.stream().collect(collectingAndThen(
+                toCollection(() -> new TreeSet<Grade>(comparing(Grade::getJobNumber))), ArrayList::new));
         gradeList.forEach(grade -> {
             TSUser tsUser = tsUserService.getUserByUid(grade.getJobNumber());
             Assert.notNull(tsUser, "uid对应的用户不存在");

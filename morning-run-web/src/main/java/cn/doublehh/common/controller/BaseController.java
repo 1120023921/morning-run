@@ -1,5 +1,6 @@
 package cn.doublehh.common.controller;
 
+import cn.doublehh.common.annotation.NeedPermission;
 import cn.doublehh.common.pojo.ErrorCode;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -41,6 +42,7 @@ public class BaseController<T> extends ApiController {
      * @param entity
      * @return
      */
+    @NeedPermission
     @ApiOperation(value = "新增", notes = "新增", httpMethod = "POST")
     @RequestMapping(value = "/insert", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public R insert(@RequestBody T entity) {
@@ -84,6 +86,7 @@ public class BaseController<T> extends ApiController {
      * @param keys
      * @return
      */
+    @NeedPermission
     @ApiOperation(value = "根据主键批量删除", notes = "根据主键批量删除", httpMethod = "DELETE")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public R delete(@RequestBody List<Serializable> keys) {
@@ -104,6 +107,7 @@ public class BaseController<T> extends ApiController {
      * @param entity
      * @return
      */
+    @NeedPermission
     @ApiOperation(value = "差量更新", notes = "差量更新", httpMethod = "PATCH")
     @RequestMapping(value = "/update", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
     public R update(@RequestBody T entity) {

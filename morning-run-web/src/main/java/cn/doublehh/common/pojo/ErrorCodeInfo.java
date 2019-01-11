@@ -13,7 +13,9 @@ public enum ErrorCodeInfo implements IErrorCode {
     FAILED(500L, "FAILED"),
     SUCCESS(200L, "SUCCESS"),
     CREATED(201L, "CREATED"),
-    Accepted(202L, "Accepted");
+    Accepted(202L, "Accepted"),
+    Unauthorized(401L, "Unauthorized"),
+    Forbidden(403L, "Forbidden");
 
     private final long code;
     private final String msg;

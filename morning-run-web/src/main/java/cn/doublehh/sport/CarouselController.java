@@ -1,6 +1,7 @@
 package cn.doublehh.sport;
 
 
+import cn.doublehh.common.annotation.NeedPermission;
 import cn.doublehh.common.constant.CosClientConstant;
 import cn.doublehh.common.pojo.ErrorCodeInfo;
 import cn.doublehh.sport.model.Carousel;
@@ -48,6 +49,7 @@ public class CarouselController {
      * @param carousel 轮播信息
      * @return 新增结果
      */
+    @NeedPermission
     @PostMapping(value = "/uploadCarousel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public R uploadCarousel(@RequestParam("uploadPic") MultipartFile pic, Carousel carousel) {
         Assert.notNull(pic, "图片不能为空");
@@ -76,6 +78,7 @@ public class CarouselController {
      * @param carousel 轮播信息
      * @return 更新结果
      */
+    @NeedPermission
     @PatchMapping(value = "/updateCarousel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public R updateCarousel(@RequestParam(required = false, value = "uploadPic") MultipartFile pic, Carousel carousel) {
         Assert.notNull(carousel, "轮播信息不能为空");
@@ -121,6 +124,13 @@ public class CarouselController {
         return R.restResult(carouselService.getById(id), ErrorCodeInfo.SUCCESS);
     }
 
+    /**
+     * 删除轮播信息
+     *
+     * @param id 轮播id
+     * @return 删除结果
+     */
+    @NeedPermission
     @DeleteMapping(value = "/deleteCarouselById/{id}")
     public R deleteCarouselById(@PathVariable("id") String id) {
         Carousel carousel = carouselService.getById(id);

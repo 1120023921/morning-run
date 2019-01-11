@@ -1,6 +1,7 @@
 package cn.doublehh.sport;
 
 
+import cn.doublehh.common.annotation.NeedPermission;
 import cn.doublehh.common.pojo.ErrorCodeInfo;
 import cn.doublehh.sport.model.Grade;
 import cn.doublehh.sport.model.GradeParams;
@@ -115,6 +116,7 @@ public class GradeController {
      * @param semester       学期
      * @return 导入结果
      */
+    @NeedPermission
     @RequestMapping(value = "/importGrade", method = RequestMethod.POST)
     public R importGrade(MultipartFile[] multipartFiles, String semester) {
         Assert.hasText(semester, "学期不能为空");
