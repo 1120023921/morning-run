@@ -140,3 +140,7 @@ cos:
   bucket: ap-guangzhou
   bucketName: pe-1252783006
   resourcesUrl: https://pe-1252783006.cos.ap-guangzhou.myqcloud.com/
+
+encrypt:
+  deSkey: 9ba45bfd500642328ec03ad8ef1b6e75
+  charset: utf-8

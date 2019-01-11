@@ -4,6 +4,7 @@ package cn.doublehh.system.controller;
 import cn.doublehh.common.annotation.NeedPermission;
 import cn.doublehh.common.controller.BaseController;
 import cn.doublehh.common.pojo.ErrorCode;
+import cn.doublehh.common.utils.EncryptUtil;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserRoleService;
 import cn.doublehh.system.service.TSUserService;
@@ -83,7 +84,7 @@ public class TSUserController extends BaseController<TSUser> {
     @ApiOperation(value = "获取用户信息带角色信息")
     @RequestMapping(value = "/getTSUserWithRoles/{userId}", method = RequestMethod.GET)
     public R getTSUserWithRoles(@PathVariable("userId") String userId) {
-        TSUser user = tsUserService.getUserWithRolesByUid(userId);
+        TSUser user = tsUserService.getUserWithRolesByUid(EncryptUtil.decode(userId));
         TSUser resUser = new TSUser();
         resUser.setUid(user.getUid());
         resUser.setRoles(user.getRoles());

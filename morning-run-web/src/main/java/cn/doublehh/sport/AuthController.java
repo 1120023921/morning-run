@@ -1,9 +1,9 @@
 package cn.doublehh.sport;
 
 import cn.doublehh.common.constant.WechatConstant;
+import cn.doublehh.common.utils.EncryptUtil;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
-import cn.doublehh.wx.mp.config.WxMpConfiguration;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
@@ -48,7 +48,7 @@ public class AuthController {
                 openidMap.put(token, wxMpUser.getOpenId());
                 return "redirect:" + wechatConstant.getDomainWeb() + "/#/bindInfo?token=" + token;
             } else {
-                return "redirect:" + wechatConstant.getDomainWeb() + "/#/?jobNumber=" + user.getUid();
+                return "redirect:" + wechatConstant.getDomainWeb() + "/#/?jobNumber=" + EncryptUtil.encode(user.getUid());
             }
         } catch (WxErrorException e) {
             e.printStackTrace();
