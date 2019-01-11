@@ -30,6 +30,14 @@ public interface CarouselService extends IService<Carousel> {
     Boolean updateCarousel(Carousel carousel);
 
     /**
+     * 删除轮播
+     *
+     * @param id 轮播id
+     * @return 删除结果
+     */
+    Boolean deleteCarousel(String id);
+
+    /**
      * 获取最大权重
      *
      * @return 最大权重

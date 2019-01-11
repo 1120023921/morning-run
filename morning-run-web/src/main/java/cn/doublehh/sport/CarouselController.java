@@ -76,7 +76,7 @@ public class CarouselController {
      * @param carousel 轮播信息
      * @return 更新结果
      */
-    @PutMapping(value = "/updateCarousel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PatchMapping(value = "/updateCarousel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public R updateCarousel(@RequestParam(required = false, value = "uploadPic") MultipartFile pic, Carousel carousel) {
         Assert.notNull(carousel, "轮播信息不能为空");
         try {
@@ -106,8 +106,26 @@ public class CarouselController {
      */
     @GetMapping(value = "/findAll")
     public R findAll() {
-        List<Carousel> carouselList = carouselService.list(new QueryWrapper<Carousel>().orderByDesc("weight"));
+        List<Carousel> carouselList = carouselService.list(new QueryWrapper<Carousel>().eq("is_valid", 1).orderByDesc("weight"));
         return R.restResult(carouselList, ErrorCodeInfo.SUCCESS);
+    }
+
+    /**
+     * 根据id查询轮播信息
+     *
+     * @param id 轮播id
+     * @return 轮播信息
+     */
+    @GetMapping(value = "/getCarouselById")
+    public R getCarouselById(String id) {
+        return R.restResult(carouselService.getById(id), ErrorCodeInfo.SUCCESS);
+    }
+
+    @DeleteMapping(value = "/deleteCarouselById/{id}")
+    public R deleteCarouselById(@PathVariable("id") String id) {
+        Carousel carousel = carouselService.getById(id);
+        cosClient.deleteObject(cosClientConstant.getBucketName(), carousel.getPic().substring(carousel.getPic().indexOf("carousel/")));
+        return R.restResult(carouselService.deleteCarousel(id), ErrorCodeInfo.SUCCESS);
     }
 }
 

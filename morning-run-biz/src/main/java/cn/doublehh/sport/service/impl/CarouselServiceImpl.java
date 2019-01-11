@@ -36,9 +36,13 @@ public class CarouselServiceImpl extends ServiceImpl<CarouselMapper, Carousel> i
         carousel.setUpdateTime(LocalDateTime.now());
         carousel.setVersion(1);
         carousel.setIsValid(1);
-        return save(carousel);
+        if (!save(carousel)) {
+            throw new RuntimeException("CarouselServiceImpl [insertCarousel] 新增轮播失败");
+        }
+        return true;
     }
 
+    @Transactional
     @Override
     public Boolean updateCarousel(Carousel carousel) {
         log.info("CarouselServiceImpl [insertCarousel] 更新轮播 carousel=" + carousel);
@@ -49,7 +53,23 @@ public class CarouselServiceImpl extends ServiceImpl<CarouselMapper, Carousel> i
         carouselDb.setWeight(carousel.getWeight());
         carouselDb.setUpdateTime(LocalDateTime.now());
         carouselDb.setVersion(carouselDb.getVersion() + 1);
-        return updateById(carouselDb);
+        if (!updateById(carouselDb)) {
+            throw new RuntimeException("CarouselServiceImpl [insertCarousel] 更新轮播失败");
+        }
+        return true;
+    }
+
+    @Override
+    public Boolean deleteCarousel(String id) {
+        log.info("CarouselServiceImpl [deleteCarousel] 删除轮播 id=" + id);
+        Carousel carouselDb = getById(id);
+        carouselDb.setVersion(carouselDb.getVersion() + 1);
+        carouselDb.setUpdateTime(LocalDateTime.now());
+        carouselDb.setIsValid(0);
+        if (!updateById(carouselDb)) {
+            throw new RuntimeException("CarouselServiceImpl [deleteCarousel] 删除轮播失败");
+        }
+        return true;
     }
 
     @Override
