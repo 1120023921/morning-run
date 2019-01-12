@@ -22,7 +22,7 @@ import java.util.Properties;
  * @myblog http://blog.csdn.net/catoop/
  * @create 2016年1月13日
  */
-@Configuration
+//@Configuration
 public class ShiroConfiguration {
 
     @Bean(name = "shiroFilter")

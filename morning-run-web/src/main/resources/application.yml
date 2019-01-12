@@ -1,17 +1,17 @@
 info:
- app:
-  name: "晨跑查询系统"
-  description: "晨跑查询系统"
-  version: "1.0"
-  spring-boot-version: "2.0.4.RELEASE"
+  app:
+    name: "晨跑查询系统"
+    description: "晨跑查询系统"
+    version: "1.0"
+    spring-boot-version: "2.0.4.RELEASE"
 
 spring:
   boot:
     admin:
       client:
-        url: http://10.60.144.110:8788
+        url: http://doublehh.cn:8788
         instance:
-          service-base-url: http://10.60.144.10:8080
+          service-base-url: ${wx.domain-web}
   thymeleaf:
     prefix: classpath:/templates/
     cache: false
@@ -19,15 +19,15 @@ spring:
   mvc:
     static-path-pattern: /**
   datasource:
-    type : com.alibaba.druid.pool.DruidDataSource
+    type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://localhost:3306/sports_score?useUnicode=true&characterEncoding=utf-8
     username: root
     password: 1120023921
     driver-class-name: com.mysql.jdbc.Driver
-#    url: jdbc:oracle:thin:@10.60.144.34:1521:ORCL
-#    username: pe
-#    password: pe
-#    driver-class-name: oracle.jdbc.driver.OracleDriver
+    #    url: jdbc:oracle:thin:@10.60.144.34:1521:ORCL
+    #    username: pe
+    #    password: pe
+    #    driver-class-name: oracle.jdbc.driver.OracleDriver
     # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
     filters: stat
     # 初始化大小，最小，最大  
@@ -64,8 +64,8 @@ management:
       exposure:
         include: "*"
   endpoint:
-      health:
-        show-details: ALWAYS
+    health:
+      show-details: ALWAYS
 
 swagger:
   enabled: true
@@ -104,7 +104,7 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
-  #配置JdbcTypeForNull, oracle数据库必须配置
+    #配置JdbcTypeForNull, oracle数据库必须配置
     jdbc-type-for-null: 'null'
 
 logging:
@@ -131,6 +131,8 @@ wx:
     uploadGradeMsgId: eZjSG_JJUgXDKc0jWBjpNruoe1dYQkjZaDgdP9gZb6Q
   domain: http://pch.doublehh.cn:81
   domain-web: http://web.doublehh.cn:81
+#  domain: http://doublehh.cn:${server.port}
+#  domain-web: http://doublehh.cn:82
   url:
     authUrl: https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base&state=login#wechat_redirect
 

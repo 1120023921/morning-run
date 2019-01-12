@@ -2,6 +2,7 @@ package cn.doublehh.common.utils;
 
 import java.security.Key;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKeyFactory;
@@ -12,8 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 /**
  * 加密/解密工具
@@ -62,11 +61,10 @@ public class EncryptUtil {
             Cipher enCipher = Cipher.getInstance("DES/CBC/PKCS5Padding");// 得到加密对象Cipher
             enCipher.init(Cipher.ENCRYPT_MODE, key, iv);// 设置工作模式为加密模式，给出密钥和向量
             pasByte = enCipher.doFinal(data.getBytes("utf-8"));
+            return new String(Base64.getEncoder().encode(pasByte), charset);
         } catch (Exception e) {
             throw new RuntimeException("学号加密异常");
         }
-        BASE64Encoder base64Encoder = new BASE64Encoder();
-        return base64Encoder.encode(pasByte);
     }
 
     /**
@@ -83,8 +81,7 @@ public class EncryptUtil {
         try {
             Cipher deCipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
             deCipher.init(Cipher.DECRYPT_MODE, key, iv);
-            BASE64Decoder base64Decoder = new BASE64Decoder();
-            pasByte = deCipher.doFinal(base64Decoder.decodeBuffer(data));
+            pasByte = deCipher.doFinal(Base64.getDecoder().decode(data.replaceAll(" ", "+")));
             return new String(pasByte, "UTF-8");
         } catch (Exception e) {
             throw new RuntimeException("学号解密异常");
@@ -93,7 +90,7 @@ public class EncryptUtil {
 
     public static void main(String[] args) {
         try {
-            String test = "2015014074";
+            String test = "2016013389";
             String key = "9ba45bfd500642328ec03ad8ef1b6e75";// 自定义密钥
             EncryptUtil des = new EncryptUtil(key, "utf-8");
             System.out.println("加密前的字符：" + test);
