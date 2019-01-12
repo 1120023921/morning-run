@@ -11,7 +11,7 @@ spring:
       client:
         url: http://doublehh.cn:8788
         instance:
-          service-base-url: ${wx.domain-web}
+          service-base-url: ${wx.domain}
   thymeleaf:
     prefix: classpath:/templates/
     cache: false
@@ -54,7 +54,7 @@ spring:
     useGlobalDataSourceStat: true
 
 server:
-  port: 8080
+  port: 8082
   servlet:
     context-path: /morning-run
 
@@ -129,10 +129,10 @@ wx:
       aesKey: 111
   templateId:
     uploadGradeMsgId: eZjSG_JJUgXDKc0jWBjpNruoe1dYQkjZaDgdP9gZb6Q
-  domain: http://pch.doublehh.cn:81
-  domain-web: http://web.doublehh.cn:81
-#  domain: http://doublehh.cn:${server.port}
-#  domain-web: http://doublehh.cn:82
+#  domain: http://pch.doublehh.cn:81
+#  domain-web: http://web.doublehh.cn:81
+  domain: http://doublehh.cn:${server.port}
+  domain-web: http://doublehh.cn:82
   url:
     authUrl: https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base&state=login#wechat_redirect
 
