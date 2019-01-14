@@ -87,6 +87,7 @@ public class TSUserController extends BaseController<TSUser> {
         TSUser user = tsUserService.getUserWithRolesByUid(EncryptUtil.decode(userId));
         TSUser resUser = new TSUser();
         resUser.setUid(user.getUid());
+        resUser.setName(user.getName());
         resUser.setRoles(user.getRoles());
         ErrorCode errorCode = new ErrorCode();
         errorCode.setCode(ErrorCode.OK);
