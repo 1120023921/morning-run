@@ -157,19 +157,23 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 toCollection(() -> new TreeSet<Grade>(comparing(Grade::getJobNumber))), ArrayList::new));
         gradeList.forEach(grade -> {
             TSUser tsUser = tsUserService.getUserByUid(grade.getJobNumber());
-            Assert.notNull(tsUser, "uid对应的用户不存在");
-            WxMpTemplateMessage templateMessage = WxMpTemplateMessage.builder()
-                    .toUser(tsUser.getWechatOpenid())
-                    .templateId(wechatConstant.getUploadGradeMsgId())
-                    .url(wechatConstant.getAuthUrl())
-                    .build();
-            templateMessage.addData(new WxMpTemplateData("first", "您的体育成绩有更新", "#FF0000"));
-            templateMessage.addData(new WxMpTemplateData("jobNumber", grade.getJobNumber(), "#173177"));
-            templateMessage.addData(new WxMpTemplateData("name", tsUser.getName(), "#173177"));
-            templateMessage.addData(new WxMpTemplateData("updateTime", LocalDateTime.now().format(df), "#173177"));
-            try {
-                wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
-            } catch (WxErrorException e) {
+//            Assert.notNull(tsUser, "uid对应的用户不存在");
+            if (null != tsUser) {
+                WxMpTemplateMessage templateMessage = WxMpTemplateMessage.builder()
+                        .toUser(tsUser.getWechatOpenid())
+                        .templateId(wechatConstant.getUploadGradeMsgId())
+                        .url(wechatConstant.getAuthUrl())
+                        .build();
+                templateMessage.addData(new WxMpTemplateData("first", "您的体育成绩有更新", "#FF0000"));
+                templateMessage.addData(new WxMpTemplateData("jobNumber", grade.getJobNumber(), "#173177"));
+                templateMessage.addData(new WxMpTemplateData("name", tsUser.getName(), "#173177"));
+                templateMessage.addData(new WxMpTemplateData("updateTime", LocalDateTime.now().format(df), "#173177"));
+                try {
+                    wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
+                } catch (WxErrorException e) {
+                    result.add(grade);
+                }
+            } else {
                 result.add(grade);
             }
         });
