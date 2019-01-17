@@ -3,7 +3,7 @@ package cn.doublehh.sport;
 
 import cn.doublehh.common.annotation.NeedPermission;
 import cn.doublehh.common.pojo.ErrorCodeInfo;
-import cn.doublehh.common.utils.EncryptUtil;
+import cn.doublehh.common.utils.DesUtil;
 import cn.doublehh.sport.model.Grade;
 import cn.doublehh.sport.model.GradeParams;
 import cn.doublehh.sport.vo.AttendanceGradeDetailParam;
@@ -45,7 +45,7 @@ public class GradeController {
      */
     @RequestMapping(value = "/getGradeByJobNumberAndType", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public R<Map<String, List<GradeView>>> getGradeByJobNumberAndType(@RequestBody GradeParams gradeParams) {
-        Map<String, List<GradeView>> gradeList = gradeService.getGradeByJobNumberAndType(EncryptUtil.decode(gradeParams.getJobNumber()), gradeParams.getType());
+        Map<String, List<GradeView>> gradeList = gradeService.getGradeByJobNumberAndType(DesUtil.decrypt(gradeParams.getJobNumber()), gradeParams.getType());
         return R.restResult(gradeList, ErrorCodeInfo.SUCCESS);
     }
 
@@ -57,7 +57,7 @@ public class GradeController {
      */
     @RequestMapping(value = "/getAttendanceVo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public R<Map<String, List<GradeView>>> getAttendanceVo(@RequestBody GradeParams gradeParams) {
-        Map<String, List<GradeView>> attendanceList = gradeService.getAttendanceVo(EncryptUtil.decode(gradeParams.getJobNumber()), gradeParams.getType());
+        Map<String, List<GradeView>> attendanceList = gradeService.getAttendanceVo(DesUtil.decrypt(gradeParams.getJobNumber()), gradeParams.getType());
         return R.restResult(attendanceList, ErrorCodeInfo.SUCCESS);
     }
 
@@ -69,7 +69,7 @@ public class GradeController {
      */
     @RequestMapping(value = "/getAttendanceGradeDetail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public R<List<GradeView>> getAttendanceGradeDetail(@RequestBody AttendanceGradeDetailParam attendanceGradeDetailParam) {
-        attendanceGradeDetailParam.setJobNumber(EncryptUtil.decode(attendanceGradeDetailParam.getJobNumber()));
+        attendanceGradeDetailParam.setJobNumber(DesUtil.decrypt(attendanceGradeDetailParam.getJobNumber()));
         List<GradeView> attendanceGradeDetail = gradeService.getAttendanceGradeDetail(attendanceGradeDetailParam);
         attendanceGradeDetail = attendanceGradeDetail.stream().sorted(Comparator.comparing(GradeView::getGradeCreateTime).reversed()).collect(Collectors.toList());
         return R.restResult(attendanceGradeDetail, ErrorCodeInfo.SUCCESS);
