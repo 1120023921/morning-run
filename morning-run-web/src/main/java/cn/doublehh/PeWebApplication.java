@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 
-@EnableSwagger2Doc
+//@EnableSwagger2Doc
 @ServletComponentScan
 @SpringBootApplication
 public class PeWebApplication {

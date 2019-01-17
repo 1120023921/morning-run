@@ -12,7 +12,6 @@ import cn.doublehh.sport.service.ItemService;
 import cn.doublehh.sport.service.SemesterService;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
-import cn.doublehh.wx.mp.config.WxMpConfiguration;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.doublehh.sport.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,6 @@ import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedReader;

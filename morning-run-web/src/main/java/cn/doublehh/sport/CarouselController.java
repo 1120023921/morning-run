@@ -12,6 +12,8 @@ import com.qcloud.cos.COSClient;
 import com.qcloud.cos.model.ObjectMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +51,7 @@ public class CarouselController {
      * @param carousel 轮播信息
      * @return 新增结果
      */
+    @CacheEvict(value = {"CarouselController:findAll", "CarouselController:getCarouselById"}, allEntries = true)
     @NeedPermission
     @PostMapping(value = "/uploadCarousel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public R uploadCarousel(@RequestParam("uploadPic") MultipartFile pic, Carousel carousel) {
@@ -78,6 +81,7 @@ public class CarouselController {
      * @param carousel 轮播信息
      * @return 更新结果
      */
+    @CacheEvict(value = {"CarouselController:findAll", "CarouselController:getCarouselById"}, allEntries = true)
     @NeedPermission
     @PatchMapping(value = "/updateCarousel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public R updateCarousel(@RequestParam(required = false, value = "uploadPic") MultipartFile pic, Carousel carousel) {
@@ -107,6 +111,7 @@ public class CarouselController {
      *
      * @return 返回轮播信息列表
      */
+    @Cacheable(value = "CarouselController:findAll")
     @GetMapping(value = "/findAll")
     public R findAll() {
         List<Carousel> carouselList = carouselService.list(new QueryWrapper<Carousel>().eq("is_valid", 1).orderByDesc("weight"));
@@ -119,6 +124,7 @@ public class CarouselController {
      * @param id 轮播id
      * @return 轮播信息
      */
+    @Cacheable(value = "CarouselController:getCarouselById")
     @GetMapping(value = "/getCarouselById")
     public R getCarouselById(String id) {
         return R.restResult(carouselService.getById(id), ErrorCodeInfo.SUCCESS);
@@ -130,6 +136,7 @@ public class CarouselController {
      * @param id 轮播id
      * @return 删除结果
      */
+    @CacheEvict(value = {"CarouselController:findAll", "CarouselController:getCarouselById"}, allEntries = true)
     @NeedPermission
     @DeleteMapping(value = "/deleteCarouselById/{id}")
     public R deleteCarouselById(@PathVariable("id") String id) {

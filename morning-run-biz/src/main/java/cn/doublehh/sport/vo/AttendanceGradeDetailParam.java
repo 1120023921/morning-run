@@ -2,6 +2,8 @@ package cn.doublehh.sport.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 胡昊
  * Description: 查询考勤成绩详情参数封装类
@@ -10,7 +12,7 @@ import lombok.Data;
  * Create: DoubleH
  */
 @Data
-public class AttendanceGradeDetailParam {
+public class AttendanceGradeDetailParam implements Serializable {
     private String jobNumber;
     private String semesterId;
     private String type;

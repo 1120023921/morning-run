@@ -23,7 +23,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://localhost:3306/sports_score?useUnicode=true&characterEncoding=utf-8
     username: root
-    password: xxx
+    password: 1120023921
     driver-class-name: com.mysql.jdbc.Driver
     #    url: jdbc:oracle:thin:@10.60.144.34:1521:ORCL
     #    username: pe
@@ -53,6 +53,22 @@ spring:
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
     # 合并多个DruidDataSource的监控数据  
     useGlobalDataSourceStat: true
+  redis:
+    database: 1
+    host: cloud.doublehh.cn
+    port: 6379
+    password: 1120023921
+    timeout: 2000ms
+    jedis:
+      pool:
+        max-active: 50
+        max-idle: 50
+        min-idle: 0
+        max-wait: 2000ms
+
+
+
+
 
 server:
   port: 8080
@@ -120,9 +136,9 @@ logging:
 wx:
   mp:
     configs:
-    - appId: xxx
-      secret: xxx
-      token: xxx
+    - appId: wxbe3c1744c0f71ab4
+      secret: e7f35779f3f3208081474ad92e83edb9
+      token: 1120023921
       aesKey:
     - appId:
       secret:
@@ -138,12 +154,12 @@ wx:
     authUrl: https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base&state=login#wechat_redirect
 
 cos:
-  secretId: xxx
-  secretKey: xxx
+  secretId: AKID9FE3cwq4kGbhGcKQxFFz1vc5LM7vAzEH
+  secretKey: FI7hlZNMVQ8chdJ2e1kGYcaI25sQiRvI
   bucket: ap-guangzhou
-  bucketName: xxx
-  resourcesUrl: xxx
+  bucketName: pe-1252783006
+  resourcesUrl: https://pe-1252783006.cos.ap-guangzhou.myqcloud.com/
 
 encrypt:
-  deSkey: xxx
+  deSkey: 9ba45bfd500642328ec03ad8ef1b6e75
   charset: utf-8
