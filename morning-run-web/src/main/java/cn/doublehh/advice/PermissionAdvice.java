@@ -1,7 +1,7 @@
 package cn.doublehh.advice;
 
 import cn.doublehh.common.pojo.ErrorCodeInfo;
-import cn.doublehh.common.utils.EncryptUtil;
+import cn.doublehh.common.utils.DesUtil;
 import cn.doublehh.system.model.TSRole;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
@@ -50,7 +50,7 @@ public class PermissionAdvice {
             ServletRequestAttributes sra = (ServletRequestAttributes) ra;
             HttpServletRequest request = sra.getRequest();
             String user = request.getHeader("User");
-            TSUser tsUser = tsUserService.getUserWithRolesByUid(EncryptUtil.decode(user));
+            TSUser tsUser = tsUserService.getUserWithRolesByUid(DesUtil.decrypt(user));
             if (null == tsUser) {
                 log.warn(ErrorCodeInfo.Unauthorized.getMsg() + " " + request.getRemoteAddr() + " " + request.getRequestURI() + " User-Agent: " + request.getHeader("User-Agent"));
                 return R.restResult(ErrorCodeInfo.Unauthorized, ErrorCodeInfo.Unauthorized);
