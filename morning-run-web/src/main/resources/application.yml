@@ -1,6 +1,7 @@
 info:
   app:
     name: "晨跑查询系统"
+    author: "胡昊"
     description: "晨跑查询系统"
     version: "1.0"
     spring-boot-version: "2.0.4.RELEASE"
@@ -12,17 +13,17 @@ spring:
         url: http://doublehh.cn:8788
         instance:
           service-base-url: ${wx.domain}
-  thymeleaf:
-    prefix: classpath:/templates/
-    cache: false
-    mode: LEGACYHTML5
+#  thymeleaf:
+#    prefix: classpath:/templates/
+#    cache: false
+#    mode: LEGACYHTML5
   mvc:
     static-path-pattern: /**
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://localhost:3306/sports_score?useUnicode=true&characterEncoding=utf-8
     username: root
-    password: 1120023921
+    password: xxx
     driver-class-name: com.mysql.jdbc.Driver
     #    url: jdbc:oracle:thin:@10.60.144.34:1521:ORCL
     #    username: pe
@@ -54,7 +55,7 @@ spring:
     useGlobalDataSourceStat: true
 
 server:
-  port: 8082
+  port: 8080
   servlet:
     context-path: /morning-run
 
@@ -67,15 +68,15 @@ management:
     health:
       show-details: ALWAYS
 
-swagger:
-  enabled: true
-  title: 体育测试-API
-  description: 体育测试API文档
-  base-package:  cn.doublehh
-  base-path: /**
-  exclude-path: /error
-  version: 1.0
-  author: 胡昊
+#swagger:
+#  enabled: true
+#  title: 体育测试-API
+#  description: 体育测试API文档
+#  base-package:  cn.doublehh
+#  base-path: /**
+#  exclude-path: /error
+#  version: 1.0
+#  author: 胡昊
 
 #mybatis
 mybatis-plus:
@@ -119,30 +120,30 @@ logging:
 wx:
   mp:
     configs:
-    - appId: wxbe3c1744c0f71ab4
-      secret: e7f35779f3f3208081474ad92e83edb9
-      token: 1120023921
+    - appId: xxx
+      secret: xxx
+      token: xxx
       aesKey:
-    - appId: 2222 （另一个公众号的appid，以下同上）
-      secret: 1111
-      token: 111
-      aesKey: 111
+    - appId:
+      secret:
+      token:
+      aesKey:
   templateId:
     uploadGradeMsgId: eZjSG_JJUgXDKc0jWBjpNruoe1dYQkjZaDgdP9gZb6Q
-#  domain: http://pch.doublehh.cn:81
-#  domain-web: http://web.doublehh.cn:81
-  domain: http://doublehh.cn:${server.port}
-  domain-web: http://doublehh.cn:82
+  domain: http://pch.doublehh.cn:81
+  domain-web: http://web.doublehh.cn:81
+#  domain: http://doublehh.cn:${server.port}
+#  domain-web: http://doublehh.cn:82
   url:
     authUrl: https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base&state=login#wechat_redirect
 
 cos:
-  secretId: AKID9FE3cwq4kGbhGcKQxFFz1vc5LM7vAzEH
-  secretKey: FI7hlZNMVQ8chdJ2e1kGYcaI25sQiRvI
+  secretId: xxx
+  secretKey: xxx
   bucket: ap-guangzhou
-  bucketName: pe-1252783006
-  resourcesUrl: https://pe-1252783006.cos.ap-guangzhou.myqcloud.com/
+  bucketName: xxx
+  resourcesUrl: xxx
 
 encrypt:
-  deSkey: 9ba45bfd500642328ec03ad8ef1b6e75
+  deSkey: xxx
   charset: utf-8
