@@ -22,6 +22,8 @@ public class WechatConstant {
     private String authUrl;
     @Value("${wx.domain}")
     private String domain;
+    @Value("${wx.domainNoPort}")
+    private String domainNoPort;
     @Value("${wx.domain-web}")
     private String domainWeb;
     @Value("${server.servlet.context-path}")
