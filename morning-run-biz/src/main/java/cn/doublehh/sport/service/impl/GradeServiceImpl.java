@@ -165,9 +165,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                         .url(wechatConstant.getAuthUrl())
                         .build();
                 templateMessage.addData(new WxMpTemplateData("first", "您的体育成绩有更新", "#FF0000"));
-                templateMessage.addData(new WxMpTemplateData("jobNumber", grade.getJobNumber(), "#173177"));
-                templateMessage.addData(new WxMpTemplateData("name", tsUser.getName(), "#173177"));
-                templateMessage.addData(new WxMpTemplateData("updateTime", LocalDateTime.now().format(df), "#173177"));
+                templateMessage.addData(new WxMpTemplateData("keyword1", grade.getJobNumber(), "#173177"));
+                templateMessage.addData(new WxMpTemplateData("keyword2", tsUser.getName(), "#173177"));
+                templateMessage.addData(new WxMpTemplateData("keyword3", LocalDateTime.now().format(df), "#173177"));
                 try {
                     wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
                 } catch (WxErrorException e) {

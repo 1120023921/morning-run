@@ -130,6 +130,7 @@ wx:
       aesKey:
   templateId:
     uploadGradeMsgId: eZjSG_JJUgXDKc0jWBjpNruoe1dYQkjZaDgdP9gZb6Q
+  domainNoPort: http://pch.doublehh.cn
   domain: http://pch.doublehh.cn:81
   domain-web: http://web.doublehh.cn:81
 #  domain: http://doublehh.cn:${server.port}
