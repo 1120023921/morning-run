@@ -76,15 +76,9 @@ public class GradeController {
     public R<List<GradeView>> getAttendanceGradeDetail(@RequestBody AttendanceGradeDetailParam attendanceGradeDetailParam) {
         attendanceGradeDetailParam.setJobNumber(DesUtil.decrypt(attendanceGradeDetailParam.getJobNumber()));
         List<GradeView> attendanceGradeDetail = gradeService.getAttendanceGradeDetail(attendanceGradeDetailParam);
-//        attendanceGradeDetail = attendanceGradeDetail.stream().sorted(Comparator.comparing(GradeView::getGradeCreateTime).reversed()).collect(Collectors.toList());
+        attendanceGradeDetail = attendanceGradeDetail.stream().sorted(Comparator.comparing(GradeView::getGradeCreateTime).reversed()).collect(Collectors.toList());
         return R.restResult(attendanceGradeDetail, ErrorCodeInfo.SUCCESS);
     }
-//    @Cacheable(value = "getAttendanceGradeDetail")
-//    @RequestMapping(value = "/getAttendanceGradeDetail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public R<AttendanceGradeDetailParam> getAttendanceGradeDetail(@RequestBody AttendanceGradeDetailParam attendanceGradeDetailParam) {
-//        log.info(attendanceGradeDetailParam.toString());
-//        return R.restResult(attendanceGradeDetailParam, ErrorCodeInfo.SUCCESS);
-//    }
 
     /**
      * 将txt转换成sql
