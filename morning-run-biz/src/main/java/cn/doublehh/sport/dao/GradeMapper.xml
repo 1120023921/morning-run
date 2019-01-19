@@ -36,7 +36,7 @@
                job_number,
                device_number,
                create_time,
-               MAX(grade_create_time),
+               MAX(grade_create_time) grade_create_time,
                grade,
                item_number,
                type,

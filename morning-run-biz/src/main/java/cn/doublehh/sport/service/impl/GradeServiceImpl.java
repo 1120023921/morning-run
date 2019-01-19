@@ -68,7 +68,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         List<GradeView> gradeViewList = gradeMapper.getGrade(jobNumber, type);
         transferGrade(gradeViewList);
         Map<String, List<GradeView>> listMap = gradeViewList.stream().collect(Collectors.groupingBy(GradeView::getSemester));
-        return sortMapByKey(listMap);
+        return listMap;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         List<GradeView> gradeViewList = gradeMapper.getAttendanceGrade(jobNumber, type);
         transferGrade(gradeViewList);
         Map<String, List<GradeView>> listMap = gradeViewList.stream().collect(Collectors.groupingBy(GradeView::getSemester));
-        return sortMapByKey(listMap);
+        return listMap;
     }
 
     @Override
