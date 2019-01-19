@@ -67,8 +67,8 @@ public class TSUserServiceImpl extends ServiceImpl<TSUserMapper, TSUser> impleme
             List<List<String>> readResult = ExcelUtil.readXlsx(in);
             readResult.forEach(row -> {
                 //导入excel不完整8列补全信息
-                if (row.size() < 8) {
-                    for (int i = row.size(); i < 8; i++) {
+                if (row.size() < 9) {
+                    for (int i = row.size(); i < 9; i++) {
                         row.add("");
                     }
                 }
@@ -87,7 +87,7 @@ public class TSUserServiceImpl extends ServiceImpl<TSUserMapper, TSUser> impleme
                 TSUserRole tsUserRole = new TSUserRole();
                 tsUserRole.setId(UUID.randomUUID().toString());
                 tsUserRole.setUserId(id);
-                tsUserRole.setRoleId("2");
+                tsUserRole.setRoleId(row.get(8));
                 tsUserRoleList.add(tsUserRole);
             });
             if (!saveBatch(tsUserList)) {
