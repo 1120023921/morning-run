@@ -2,6 +2,8 @@ package cn.doublehh.sport.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 胡昊
  * Description:获取成绩参数
@@ -10,7 +12,7 @@ import lombok.Data;
  * Create: DoubleH
  */
 @Data
-public class GradeParams {
+public class GradeParams implements Serializable {
     private String jobNumber;
     private String type;
 }
