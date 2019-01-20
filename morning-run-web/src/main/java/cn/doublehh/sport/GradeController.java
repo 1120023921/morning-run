@@ -53,14 +53,14 @@ public class GradeController {
     }
 
     /**
-     * 管理员查询学生成绩
+     * 教师查询学生成绩
      *
      * @param gradeParams 查询条件对象
      * @return 体质测试成绩列表
      */
     @NeedPermission(roleIds = {"admin", "teacher"})
-    @RequestMapping(value = "/getGradeByJobNumberAndTypeByAdmin", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public R<Map<String, List<GradeView>>> getGradeByJobNumberAndTypeByAdmin(@RequestBody GradeParams gradeParams) {
+    @RequestMapping(value = "/getGradeByJobNumberAndTypeByTeacher", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public R<Map<String, List<GradeView>>> getGradeByJobNumberAndTypeByTeacher(@RequestBody GradeParams gradeParams) {
         Map<String, List<GradeView>> gradeList = gradeService.getGradeByJobNumberAndType(gradeParams.getJobNumber(), gradeParams.getType());
         return R.restResult(gradeList, ErrorCodeInfo.SUCCESS);
     }
@@ -79,6 +79,19 @@ public class GradeController {
     }
 
     /**
+     * 教师获取体教考勤成绩
+     *
+     * @param gradeParams 查询条件对象
+     * @return 体教考勤成绩列表
+     */
+    @NeedPermission(roleIds = {"admin", "teacher"})
+    @RequestMapping(value = "/getAttendanceVoByTeacher", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public R<Map<String, List<GradeView>>> getAttendanceVoByTeacher(@RequestBody GradeParams gradeParams) {
+        Map<String, List<GradeView>> attendanceList = gradeService.getAttendanceVo(gradeParams.getJobNumber(), gradeParams.getType());
+        return R.restResult(attendanceList, ErrorCodeInfo.SUCCESS);
+    }
+
+    /**
      * 获取体教考勤详细信息
      *
      * @param attendanceGradeDetailParam 查询考勤成绩详情参数封装类
@@ -88,6 +101,21 @@ public class GradeController {
     @RequestMapping(value = "/getAttendanceGradeDetail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public R<List<GradeView>> getAttendanceGradeDetail(@RequestBody AttendanceGradeDetailParam attendanceGradeDetailParam) {
         attendanceGradeDetailParam.setJobNumber(DesUtil.decrypt(attendanceGradeDetailParam.getJobNumber()));
+        List<GradeView> attendanceGradeDetail = gradeService.getAttendanceGradeDetail(attendanceGradeDetailParam);
+        attendanceGradeDetail = attendanceGradeDetail.stream().sorted(Comparator.comparing(GradeView::getGradeCreateTime).reversed()).collect(Collectors.toList());
+        return R.restResult(attendanceGradeDetail, ErrorCodeInfo.SUCCESS);
+    }
+
+    /**
+     * 教师获取体教考勤详细信息
+     *
+     * @param attendanceGradeDetailParam 查询考勤成绩详情参数封装类
+     * @return 体教考勤详细信息
+     */
+    @NeedPermission(roleIds = {"admin", "teacher"})
+    @RequestMapping(value = "/getAttendanceGradeDetailByTeacher", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public R<List<GradeView>> getAttendanceGradeDetailByTeacher(@RequestBody AttendanceGradeDetailParam attendanceGradeDetailParam) {
+        attendanceGradeDetailParam.setJobNumber(attendanceGradeDetailParam.getJobNumber());
         List<GradeView> attendanceGradeDetail = gradeService.getAttendanceGradeDetail(attendanceGradeDetailParam);
         attendanceGradeDetail = attendanceGradeDetail.stream().sorted(Comparator.comparing(GradeView::getGradeCreateTime).reversed()).collect(Collectors.toList());
         return R.restResult(attendanceGradeDetail, ErrorCodeInfo.SUCCESS);
