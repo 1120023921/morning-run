@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -66,7 +67,7 @@ public class TSUserServiceImpl extends ServiceImpl<TSUserMapper, TSUser> impleme
         try {
             List<List<String>> readResult = ExcelUtil.readXlsx(in);
             readResult.forEach(row -> {
-                //导入excel不完整8列补全信息
+                //导入excel不完整9列补全信息
                 if (row.size() < 9) {
                     for (int i = row.size(); i < 9; i++) {
                         row.add("");
@@ -83,6 +84,8 @@ public class TSUserServiceImpl extends ServiceImpl<TSUserMapper, TSUser> impleme
                 tsUser.setMail(row.get(5));
                 tsUser.setQqNumber(row.get(6));
                 tsUser.setWechatNumber(row.get(7));
+                tsUser.setCreateTime(LocalDateTime.now());
+                tsUser.setUpdateTime(LocalDateTime.now());
                 tsUserList.add(tsUser);
                 TSUserRole tsUserRole = new TSUserRole();
                 tsUserRole.setId(UUID.randomUUID().toString());

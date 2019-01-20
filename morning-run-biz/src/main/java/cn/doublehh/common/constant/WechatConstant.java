@@ -42,7 +42,7 @@ public class WechatConstant {
      */
     public String getAuthUrl() {
         try {
-            return String.format(authUrl, appId, URLEncoder.encode(domain + contextPath + "/wx/auth/" + appId + "/login", "UTF-8"));
+            return String.format(authUrl, appId, URLEncoder.encode(domainNoPort + contextPath + "/wx/auth/" + appId + "/login", "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             log.error("WechatConstant [getAuthUrl] redirect encode失败", e);
             return null;

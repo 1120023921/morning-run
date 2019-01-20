@@ -67,7 +67,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         log.info("GradeViewServiceImpl [getGradeByJobNumberAndType] 获取成绩 jobNumber=" + jobNumber + " type=" + type);
         List<GradeView> gradeViewList = gradeMapper.getGrade(jobNumber, type);
         transferGrade(gradeViewList);
-        Map<String, List<GradeView>> listMap = gradeViewList.stream().collect(Collectors.groupingBy(GradeView::getSemester));
+        Map<String, List<GradeView>> listMap = gradeViewList.stream().collect(Collectors.groupingBy(gradeView-> gradeView.getGradeCreateTime().substring(0,4)));
         return listMap;
     }
 

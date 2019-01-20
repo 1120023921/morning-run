@@ -53,6 +53,19 @@ public class GradeController {
     }
 
     /**
+     * 管理员查询学生成绩
+     *
+     * @param gradeParams 查询条件对象
+     * @return 体质测试成绩列表
+     */
+    @NeedPermission(roleIds = {"admin", "teacher"})
+    @RequestMapping(value = "/getGradeByJobNumberAndTypeByAdmin", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public R<Map<String, List<GradeView>>> getGradeByJobNumberAndTypeByAdmin(@RequestBody GradeParams gradeParams) {
+        Map<String, List<GradeView>> gradeList = gradeService.getGradeByJobNumberAndType(gradeParams.getJobNumber(), gradeParams.getType());
+        return R.restResult(gradeList, ErrorCodeInfo.SUCCESS);
+    }
+
+    /**
      * 获取体教考勤成绩
      *
      * @param gradeParams 查询条件对象
@@ -124,7 +137,7 @@ public class GradeController {
      * @return 导入结果
      */
     @CacheEvict(value = {"GradeController:getGradeByJobNumberAndType", "GradeController:getAttendanceVo", "GradeController:getAttendanceGradeDetail"}, allEntries = true)
-    @NeedPermission
+    @NeedPermission(roleIds = {"admin", "teacher"})
     @RequestMapping(value = "/importGrade", method = RequestMethod.POST)
     public R importGrade(MultipartFile[] multipartFiles, String semester) {
         Assert.hasText(semester, "学期不能为空");

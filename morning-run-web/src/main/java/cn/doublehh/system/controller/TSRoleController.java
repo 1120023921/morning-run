@@ -44,7 +44,7 @@ public class TSRoleController extends BaseController<TSRole> {
      * @param userRolePojo
      * @return
      */
-    @NeedPermission
+    @NeedPermission(roleIds = {"admin", "teacher"})
     @ApiOperation(value = "给角色分配用户", notes = "给角色分配用户", httpMethod = "POST")
     @RequestMapping(value = "/addUsersToRole", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -66,7 +66,7 @@ public class TSRoleController extends BaseController<TSRole> {
      * @param userRolePojo
      * @return
      */
-    @NeedPermission
+    @NeedPermission(roleIds = {"admin", "teacher"})
     @ApiOperation(value = "从角色中移除用户", notes = "从角色中移除用户", httpMethod = "DELETE")
     @RequestMapping(value = "/deleteUsersFromRole", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -88,7 +88,7 @@ public class TSRoleController extends BaseController<TSRole> {
      * @param userRolePojo
      * @return
      */
-    @NeedPermission
+    @NeedPermission(roleIds = {"admin", "teacher"})
     @ApiOperation(value = "给角色分配资源", notes = "给角色分配资源", httpMethod = "POST")
     @RequestMapping(value = "/addResourcesToRole", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -110,7 +110,7 @@ public class TSRoleController extends BaseController<TSRole> {
      * @param userRolePojo
      * @return
      */
-    @NeedPermission
+    @NeedPermission(roleIds = {"admin", "teacher"})
     @ApiOperation(value = "从角色中移除资源", notes = "从角色中移除资源", httpMethod = "DELETE")
     @RequestMapping(value = "/deleteResourcesFromRole", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

@@ -43,7 +43,7 @@ public class TSUserController extends BaseController<TSUser> {
      * @param userRolePojo
      * @return
      */
-    @NeedPermission
+    @NeedPermission(roleIds = {"admin", "teacher"})
     @ApiOperation(value = "给用户分配角色", notes = "给用户分配角色", httpMethod = "POST")
     @RequestMapping(value = "/addRolesToUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -65,7 +65,7 @@ public class TSUserController extends BaseController<TSUser> {
      * @param userRolePojo
      * @return
      */
-    @NeedPermission
+    @NeedPermission(roleIds = {"admin", "teacher"})
     @ApiOperation(value = "从用户中移除角色", notes = "从用户中移除角色", httpMethod = "DELETE")
     @RequestMapping(value = "/deleteRolesFromUser", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

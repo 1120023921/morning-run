@@ -79,7 +79,7 @@ public class UserController {
      * @param multipartFile 学生信息Excel
      * @return
      */
-    @NeedPermission
+    @NeedPermission(roleIds = {"admin", "teacher"})
     @ApiOperation(value = "导入学生信息", httpMethod = "POST")
     @RequestMapping(value = "/importStudentInfo", method = RequestMethod.POST)
     public R importStudentInfo(MultipartFile multipartFile) {

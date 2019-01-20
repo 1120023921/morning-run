@@ -1,5 +1,6 @@
 package cn.doublehh.advice;
 
+import cn.doublehh.common.annotation.NeedPermission;
 import cn.doublehh.common.pojo.ErrorCodeInfo;
 import cn.doublehh.common.utils.DesUtil;
 import cn.doublehh.system.model.TSRole;
@@ -19,6 +20,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,8 +44,8 @@ public class PermissionAdvice {
 
     }
 
-    @Around("permission()")
-    public Object doAroundAdvice(ProceedingJoinPoint proceedingJoinPoint) {
+    @Around("permission()&&@annotation(needPermission)")
+    public Object doAroundAdvice(ProceedingJoinPoint proceedingJoinPoint, NeedPermission needPermission) {
         log.info("权限判断：" + proceedingJoinPoint.getSignature().getName());
         try {
             RequestAttributes ra = RequestContextHolder.getRequestAttributes();
@@ -55,7 +57,7 @@ public class PermissionAdvice {
                 log.warn(ErrorCodeInfo.Unauthorized.getMsg() + " " + request.getRemoteAddr() + " " + request.getRequestURI() + " User-Agent: " + request.getHeader("User-Agent"));
                 return R.restResult(ErrorCodeInfo.Unauthorized, ErrorCodeInfo.Unauthorized);
             }
-            List<TSRole> roles = tsUser.getRoles().stream().filter(tsRole -> "admin".equals(tsRole.getRoid())).collect(Collectors.toList());
+            List<TSRole> roles = tsUser.getRoles().stream().filter(tsRole -> Arrays.asList(needPermission.roleIds()).contains(tsRole.getRoid())).collect(Collectors.toList());
             if (CollectionUtils.isEmpty(roles)) {
                 log.warn(ErrorCodeInfo.Forbidden.getMsg() + " " + request.getRemoteAddr() + " " + request.getRequestURI() + " User-Agent: " + request.getHeader("User-Agent"));
                 return R.restResult(ErrorCodeInfo.Forbidden, ErrorCodeInfo.Forbidden);

@@ -52,7 +52,7 @@ public class CarouselController {
      * @return 新增结果
      */
     @CacheEvict(value = {"CarouselController:findAll", "CarouselController:getCarouselById"}, allEntries = true)
-    @NeedPermission
+    @NeedPermission(roleIds = {"admin", "teacher"})
     @PostMapping(value = "/uploadCarousel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public R uploadCarousel(@RequestParam("uploadPic") MultipartFile pic, Carousel carousel) {
         Assert.notNull(pic, "图片不能为空");
@@ -82,7 +82,7 @@ public class CarouselController {
      * @return 更新结果
      */
     @CacheEvict(value = {"CarouselController:findAll", "CarouselController:getCarouselById"}, allEntries = true)
-    @NeedPermission
+    @NeedPermission(roleIds = {"admin", "teacher"})
     @PatchMapping(value = "/updateCarousel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public R updateCarousel(@RequestParam(required = false, value = "uploadPic") MultipartFile pic, Carousel carousel) {
         Assert.notNull(carousel, "轮播信息不能为空");
@@ -137,7 +137,7 @@ public class CarouselController {
      * @return 删除结果
      */
     @CacheEvict(value = {"CarouselController:findAll", "CarouselController:getCarouselById"}, allEntries = true)
-    @NeedPermission
+    @NeedPermission(roleIds = {"admin", "teacher"})
     @DeleteMapping(value = "/deleteCarouselById/{id}")
     public R deleteCarouselById(@PathVariable("id") String id) {
         Carousel carousel = carouselService.getById(id);

@@ -15,4 +15,5 @@ import java.lang.annotation.*;
 public @interface NeedPermission {
 
     String value() default "";
+    String[] roleIds();
 }
