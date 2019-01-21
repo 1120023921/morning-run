@@ -69,7 +69,7 @@ public class AuthController {
                 openidMap.put(token, wxMpUser.getOpenId());
                 return "redirect:" + wechatConstant.getDomainWeb() + "/#/bindInfo?token=" + token;
             } else {
-                logInfo.setUserId(wxMpUser.getOpenId());
+                logInfo.setUserId(user.getUid());
                 logInfo.setDescription("登录");
                 logInfoService.addLogInfo(userAgentInfo, logInfo);
                 return "redirect:" + wechatConstant.getDomainWeb() + "/#/?jobNumber=" + DesUtil.encrypt(user.getUid());
