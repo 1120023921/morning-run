@@ -2,10 +2,13 @@ package cn.doublehh.sport.dao;
 
 import cn.doublehh.sport.model.LogInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author 胡昊
@@ -13,4 +16,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface LogInfoMapper extends BaseMapper<LogInfo> {
 
+    /**
+     * 获取当天日志
+     *
+     * @return 日志列表
+     */
+    List<LogInfo> getTodayLog(@Param("today") String today, @Param("tomorrow") String tomorrow);
 }

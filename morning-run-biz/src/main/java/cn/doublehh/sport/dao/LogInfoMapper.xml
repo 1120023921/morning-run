@@ -4,24 +4,33 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="cn.doublehh.sport.model.LogInfo">
-        <id column="id" property="id" />
-        <result column="user_id" property="userId" />
-        <result column="uri" property="uri" />
-        <result column="ip" property="ip" />
-        <result column="create_time" property="createTime" />
-        <result column="user_agent" property="userAgent" />
-        <result column="device" property="device" />
-        <result column="operate_system" property="operateSystem" />
-        <result column="address" property="address" />
-        <result column="version" property="version" />
-        <result column="update_time" property="updateTime" />
-        <result column="is_valid" property="isValid" />
-        <result column="is_sync" property="isSync" />
-        <result column="browser" property="browser" />
-        <result column="browser_version" property="browserVersion" />
-        <result column="kernel" property="kernel" />
-        <result column="language" property="language" />
-        <result column="description" property="description" />
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="uri" property="uri"/>
+        <result column="ip" property="ip"/>
+        <result column="create_time" property="createTime"/>
+        <result column="user_agent" property="userAgent"/>
+        <result column="device" property="device"/>
+        <result column="operate_system" property="operateSystem"/>
+        <result column="address" property="address"/>
+        <result column="version" property="version"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_valid" property="isValid"/>
+        <result column="is_sync" property="isSync"/>
+        <result column="browser" property="browser"/>
+        <result column="browser_version" property="browserVersion"/>
+        <result column="kernel" property="kernel"/>
+        <result column="language" property="language"/>
+        <result column="description" property="description"/>
     </resultMap>
+    <sql id="BaseSql">
+        id, user_id, uri, ip, create_time, user_agent, device, operate_system, address, version,
+        update_time, is_valid, is_sync, browser, browser_version, kernel, language, description
+    </sql>
+    <select id="getTodayLog" resultType="cn.doublehh.sport.model.LogInfo" parameterType="java.lang.String">
+        SELECT
+        <include refid="BaseSql"/>
+        FROM log_info WHERE create_time >= #{today} AND create_time &lt; #{tomorrow}
+    </select>
 
 </mapper>

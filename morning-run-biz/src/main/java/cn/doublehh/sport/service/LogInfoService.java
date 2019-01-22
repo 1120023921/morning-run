@@ -4,6 +4,8 @@ import cn.doublehh.sport.model.LogInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import cz.mallat.uasparser.UserAgentInfo;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务类
@@ -22,4 +24,18 @@ public interface LogInfoService extends IService<LogInfo> {
      * @return 新增结果
      */
     Boolean addLogInfo(UserAgentInfo userAgentInfo, LogInfo logInfo);
+
+    /**
+     * 获取当天日志
+     *
+     * @return 日志列表
+     */
+    List<LogInfo> getTodayLog();
+
+    /**
+     * 获取所有日志
+     *
+     * @return
+     */
+    List<LogInfo> findAll();
 }
