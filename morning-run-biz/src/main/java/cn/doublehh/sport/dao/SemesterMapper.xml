@@ -4,13 +4,16 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="cn.doublehh.sport.model.Semester">
-        <id column="id" property="id" />
-        <result column="semester" property="semester" />
-        <result column="weight" property="weight" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
-        <result column="version" property="version" />
-        <result column="is_valid" property="isValid" />
+        <id column="id" property="id"/>
+        <result column="semester" property="semester"/>
+        <result column="weight" property="weight"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="version" property="version"/>
+        <result column="is_valid" property="isValid"/>
     </resultMap>
+    <select id="getNewWeight" resultType="java.lang.Integer">
+        SELECT MAX(weight) FROM semester
+    </select>
 
 </mapper>

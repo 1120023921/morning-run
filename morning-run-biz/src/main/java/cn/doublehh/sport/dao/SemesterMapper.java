@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author 胡昊
@@ -13,4 +13,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface SemesterMapper extends BaseMapper<Semester> {
 
+    /**
+     * 获取最大权重
+     *
+     * @return 最大权重
+     */
+    Integer getNewWeight();
 }

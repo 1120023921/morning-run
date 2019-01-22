@@ -74,6 +74,7 @@ public class CarouselServiceImpl extends ServiceImpl<CarouselMapper, Carousel> i
 
     @Override
     public Integer getNewWeight() {
+        log.info("CarouselServiceImpl [getNewWeight] 获取最大权重");
         Integer weight = carouselMapper.getNewWeight();
         if (null == weight) {
             return 1;
