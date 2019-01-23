@@ -46,4 +46,12 @@ public interface TSUserService extends IService<TSUser> {
      * @return 导入结果
      */
     Boolean importStudentInfo(InputStream in);
+
+    /**
+     * 根据角色获取用户
+     *
+     * @param roleId 角色id
+     * @return 用户列表
+     */
+    List<TSUser> getUserByRoleId(String roleId);
 }

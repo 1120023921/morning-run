@@ -4,9 +4,11 @@ import cn.doublehh.system.model.TSUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author 胡昊
@@ -20,4 +22,12 @@ public interface TSUserMapper extends BaseMapper<TSUser> {
      * @return
      */
     TSUser getUserWithRolesByUid(@Param("uid") String uid);
+
+    /**
+     * 根据角色获取用户
+     *
+     * @param roleId 角色id
+     * @return 用户列表
+     */
+    List<TSUser> getUserByRoleId(@Param("roleId") String roleId);
 }

@@ -11,6 +11,7 @@ import cn.doublehh.sport.vo.GradeView;
 import cn.doublehh.sport.service.GradeService;
 import com.baomidou.mybatisplus.extension.api.R;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,7 +20,9 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -196,6 +199,26 @@ public class GradeController {
         } catch (Exception e) {
             log.error("GradeViewController [importGrade]：导入学生成绩失败" + e.getMessage());
             return R.restResult("导入学生成绩失败", ErrorCodeInfo.FAILED);
+        }
+    }
+
+    /**
+     * 导出学生成绩
+     *
+     * @param semesterId 学期id
+     * @return 导出的Excel
+     */
+    @GetMapping(value = "/exportGrade")
+    public void exportGrade(String semesterId, HttpServletResponse response) {
+        try {
+            XSSFWorkbook xssfWorkbook = gradeService.exportGradeBySemester(semesterId);
+            OutputStream output = response.getOutputStream();
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode("学生成绩信息.xlsx", "UTF-8"));
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            xssfWorkbook.write(output);
+            output.close();
+        } catch (IOException e) {
+            log.error("导出成绩Excel失败", e);
         }
     }
 }

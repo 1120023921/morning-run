@@ -47,6 +47,23 @@
         GROUP BY type,
                  item_number
     </select>
+    <select id="getGradeBySemester" resultMap="GradeToGradeViewMap">
+        SELECT id,
+               job_number,
+               device_number,
+               create_time,
+               grade_create_time,
+               MAX(grade) grade,
+               item_number,
+               type,
+               semester_id
+        FROM grade
+        WHERE job_number = #{jobNumber}
+          AND type = #{type}
+          AND semester_id = #{semesterId}
+        GROUP BY type,
+                 item_number
+    </select>
     <select id="getAttendanceGrade" resultMap="GradeToGradeViewMap">
         SELECT t1.id,
                t1.job_number,
@@ -94,6 +111,36 @@
           AND type = #{type}
           AND item_number = #{itemNumber}
         GROUP BY SUBSTR(grade_create_time, 1, 8)
+    </select>
+    <select id="getAttendanceGradeBySemester" resultMap="GradeToGradeViewMap">
+        SELECT t1.id,
+               t1.job_number,
+               t1.device_number,
+               t1.create_time,
+               t1.grade_create_time,
+               SUM(CAST(t1.grade AS SIGNED)) grade,
+               t1.item_number,
+               t1.type,
+               t1.semester_id
+        FROM (SELECT id,
+                     job_number,
+                     device_number,
+                     create_time,
+                     grade_create_time,
+                     MAX(grade) grade,
+                     item_number,
+                     type,
+                     semester_id
+              FROM grade
+              WHERE job_number = #{jobNumber}
+              GROUP BY type,
+                       item_number,
+                       SUBSTR(grade_create_time, 1, 8)) t1
+        WHERE job_number = #{jobNumber}
+          AND type = #{type}
+          AND semester_id = #{semesterId}
+        GROUP BY t1.type,
+                 t1.item_number
     </select>
 
 </mapper>

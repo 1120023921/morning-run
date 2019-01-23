@@ -28,6 +28,16 @@ public interface GradeMapper extends BaseMapper<Grade> {
     List<GradeView> getGrade(@Param("jobNumber") String jobNumber, @Param("type") String type);
 
     /**
+     * 获取测试成绩
+     *
+     * @param jobNumber  学号
+     * @param type       项目类型
+     * @param semesterId 学期id
+     * @return
+     */
+    List<GradeView> getGradeBySemester(@Param("jobNumber") String jobNumber, @Param("type") String type, @Param("semesterId") String semesterId);
+
+    /**
      * 获取考勤成绩
      *
      * @param jobNumber 学号
@@ -35,6 +45,16 @@ public interface GradeMapper extends BaseMapper<Grade> {
      * @return
      */
     List<GradeView> getAttendanceGrade(@Param("jobNumber") String jobNumber, @Param("type") String type);
+
+    /**
+     * 根据学期获取考勤成绩
+     *
+     * @param jobNumber  学号
+     * @param type       项目类型
+     * @param semesterId 学期id
+     * @return
+     */
+    List<GradeView> getAttendanceGradeBySemester(@Param("jobNumber") String jobNumber, @Param("type") String type, @Param("semesterId") String semesterId);
 
     /**
      * 获取考勤详细信息

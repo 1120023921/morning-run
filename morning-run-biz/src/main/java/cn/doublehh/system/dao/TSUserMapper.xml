@@ -39,16 +39,19 @@
         wechat_openid, qq_openid, grade
     </sql>
     <select id="getUserWithRolesByUid" resultMap="UserWithRolesMap">
-        SELECT
-            *
-        FROM
-            t_s_user t1,
-            t_s_role t2,
-            t_s_user_role t3
-        WHERE
-            t1.id = t3.user_id
-            AND t2.id = t3.role_id
-            AND t1.uid = #{uid}
+        SELECT *
+        FROM t_s_user t1,
+             t_s_role t2,
+             t_s_user_role t3
+        WHERE t1.id = t3.user_id
+          AND t2.id = t3.role_id
+          AND t1.uid = #{uid}
+    </select>
+    <select id="getUserByRoleId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT t_s_user.uid, t_s_user.NAME
+        FROM t_s_user_role
+                 LEFT JOIN t_s_user ON t_s_user_role.user_id = t_s_user.id
+        WHERE role_id = #{roleId}
     </select>
 
 </mapper>

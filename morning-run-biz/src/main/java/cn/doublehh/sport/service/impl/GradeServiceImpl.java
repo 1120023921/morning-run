@@ -1,6 +1,7 @@
 package cn.doublehh.sport.service.impl;
 
 import cn.doublehh.common.constant.WechatConstant;
+import cn.doublehh.sport.dto.GradeEnumForExport;
 import cn.doublehh.sport.model.Grade;
 import cn.doublehh.sport.dao.GradeMapper;
 import cn.doublehh.sport.vo.AttendanceGradeDetailParam;
@@ -12,6 +13,7 @@ import cn.doublehh.sport.service.ItemService;
 import cn.doublehh.sport.service.SemesterService;
 import cn.doublehh.system.model.TSUser;
 import cn.doublehh.system.service.TSUserService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.doublehh.sport.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,9 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,8 +71,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         log.info("GradeViewServiceImpl [getGradeByJobNumberAndType] 获取成绩 jobNumber=" + jobNumber + " type=" + type);
         List<GradeView> gradeViewList = gradeMapper.getGrade(jobNumber, type);
         transferGrade(gradeViewList);
-        Map<String, List<GradeView>> listMap = gradeViewList.stream().collect(Collectors.groupingBy(gradeView-> gradeView.getGradeCreateTime().substring(0,4)));
-        return listMap;
+        return gradeViewList.stream().collect(Collectors.groupingBy(gradeView -> gradeView.getGradeCreateTime().substring(0, 4)));
     }
 
     @Override
@@ -75,8 +79,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         log.info("GradeViewServiceImpl [getGradeByJobNumberAndType] 获取体教考勤 jobNumber=" + jobNumber + " type=" + type);
         List<GradeView> gradeViewList = gradeMapper.getAttendanceGrade(jobNumber, type);
         transferGrade(gradeViewList);
-        Map<String, List<GradeView>> listMap = gradeViewList.stream().collect(Collectors.groupingBy(GradeView::getSemester));
-        return listMap;
+        return gradeViewList.stream().collect(Collectors.groupingBy(GradeView::getSemester));
     }
 
     @Override
@@ -127,7 +130,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
      * 补全成绩信息
      *
      * @param gradeViewList 成绩列表
-     * @return
      */
     private void transferGrade(List<GradeView> gradeViewList) {
         gradeViewList.forEach(gradeView -> {
@@ -151,7 +153,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         log.info("GradeViewServiceImpl [sendUploadGradeMsg] 发送新成绩上传提醒");
         List<Grade> result = new LinkedList<>();
         gradeList = gradeList.stream().collect(collectingAndThen(
-                toCollection(() -> new TreeSet<Grade>(comparing(Grade::getJobNumber))), ArrayList::new));
+                toCollection(() -> new TreeSet<>(comparing(Grade::getJobNumber))), ArrayList::new));
         gradeList.forEach(grade -> {
             TSUser tsUser = tsUserService.getUserByUid(grade.getJobNumber());
 //            Assert.notNull(tsUser, "uid对应的用户不存在");
@@ -180,11 +182,90 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         return result;
     }
 
+    @Override
+    public XSSFWorkbook exportGradeBySemester(String semesterId) {
+        log.info("GradeViewServiceImpl [exportGradeBySemester] 导出学生成绩 semesterId=" + semesterId);
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet("学生成绩");
+        Row row = sheet.createRow(0);
+        row.createCell(0).setCellValue("学号");
+        row.createCell(1).setCellValue("姓名");
+        for (int i = 2; i < GradeEnumForExport.values().length + 2; i++) {
+            row.createCell(i).setCellValue(GradeEnumForExport.getItemName(i));
+        }
+        List<TSUser> userList = tsUserService.getUserByRoleId("2");
+        List<Item> itemList = itemService.list(new QueryWrapper<>());
+        for (int i = 0; i < 1000; i++) {
+            row = sheet.createRow(i + 1);
+            row.createCell(0).setCellValue(userList.get(i).getUid());
+            row.createCell(1).setCellValue(userList.get(i).getName());
+            List<GradeView> gradeViewList = getGradeByJobNumberAndTypeAndSemester(userList.get(i).getUid(), "02", semesterId);
+            Row finalRow = row;
+            System.out.println(i);
+            gradeViewList.forEach(gradeView -> {
+                Item itemRes = itemList.stream().filter(item -> item.getType().equals(gradeView.getType()) && item.getItemNumber().equals(gradeView.getItemNumber())).collect(Collectors.toList()).get(0);
+                finalRow.createCell(GradeEnumForExport.getIndex(itemRes.getItemName())).setCellValue(transferName(gradeView.getGrade(), itemRes.getItemName()));
+            });
+            List<GradeView> attendanceVoList = getAttendanceVoBySemester(userList.get(i).getUid(), "01", semesterId);
+            attendanceVoList.forEach(gradeView -> {
+                Item itemRes = itemList.stream().filter(item -> item.getType().equals(gradeView.getType()) && item.getItemNumber().equals(gradeView.getItemNumber())).collect(Collectors.toList()).get(0);
+                finalRow.createCell(GradeEnumForExport.getIndex(itemRes.getItemName())).setCellValue(transferName(gradeView.getGrade(), itemRes.getItemName()));
+            });
+        }
+        return wb;
+    }
+
+    /**
+     * 根据学期统计学生考勤次数
+     *
+     * @param jobNumber  学号
+     * @param type       项目类型
+     * @param semesterId 学期id
+     * @return
+     */
+    private List<GradeView> getAttendanceVoBySemester(String jobNumber, String type, String semesterId) {
+        log.info("GradeViewServiceImpl [getAttendanceVoBySemester] 获取体教考勤 jobNumber=" + jobNumber + " type=" + type + " semesterId=" + semesterId);
+        List<GradeView> gradeViewList = gradeMapper.getAttendanceGradeBySemester(jobNumber, type, semesterId);
+//        transferGrade(gradeViewList);
+        return gradeViewList;
+    }
+
+    /**
+     * 根据学期获取学生成绩
+     *
+     * @param jobNumber  学号
+     * @param type       项目类型
+     * @param semesterId 学期id
+     * @return 成绩列表
+     */
+    private List<GradeView> getGradeByJobNumberAndTypeAndSemester(String jobNumber, String type, String semesterId) {
+        log.info("GradeViewServiceImpl [getGradeByJobNumberAndTypeAndSemester] 获取成绩 jobNumber=" + jobNumber + " type=" + type + " semesterId=" + semesterId);
+        List<GradeView> gradeViewList = gradeMapper.getGradeBySemester(jobNumber, type, semesterId);
+//        transferGrade(gradeViewList);
+        return gradeViewList;
+    }
+
+    /**
+     * 转换成绩
+     *
+     * @return 转换后的成绩
+     */
+    private String transferName(String grade, String itemName) {
+        if (itemName.indexOf("跑") > -1) {
+            return grade.substring(3, 4) + '\'' + grade.substring(4, 6) + '\'' + '\'' + grade.substring(6, 8);
+        } else {
+            if (grade.indexOf(".") > -1) {
+                return String.valueOf(Double.valueOf(grade));
+            }
+            return String.valueOf(Integer.valueOf(grade));
+        }
+    }
+
     public static <T> Map<String, List<T>> sortMapByKey(Map<String, List<T>> map) {
         if (map == null || map.isEmpty()) {
             return null;
         }
-        Map<String, List<T>> sortMap = new TreeMap<String, List<T>>(new GradeServiceImpl.MapKeyComparator());
+        Map<String, List<T>> sortMap = new TreeMap<>(new GradeServiceImpl.MapKeyComparator());
         sortMap.putAll(map);
         return sortMap;
     }

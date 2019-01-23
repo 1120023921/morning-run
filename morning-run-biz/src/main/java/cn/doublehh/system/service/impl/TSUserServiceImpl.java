@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
@@ -104,5 +105,15 @@ public class TSUserServiceImpl extends ServiceImpl<TSUserMapper, TSUser> impleme
             log.error("TSUserServiceImpl [importStudentInfo] 读取导入Excel失败", e);
             return false;
         }
+    }
+
+    @Override
+    public List<TSUser> getUserByRoleId(String roleId) {
+        log.info("TSUserServiceImpl [getUserByRoleId] 根据角色获取用户信息 roleId=" + roleId);
+        List<TSUser> userList = tsUserMapper.getUserByRoleId(roleId);
+        if (!CollectionUtils.isEmpty(userList)) {
+            return userList;
+        }
+        return new ArrayList<>();
     }
 }

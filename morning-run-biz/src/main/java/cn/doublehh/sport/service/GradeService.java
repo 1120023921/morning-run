@@ -4,6 +4,7 @@ import cn.doublehh.sport.model.Grade;
 import cn.doublehh.sport.vo.AttendanceGradeDetailParam;
 import cn.doublehh.sport.vo.GradeView;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.BufferedReader;
 import java.util.List;
@@ -61,4 +62,12 @@ public interface GradeService extends IService<Grade> {
      * @return 发送失败的列表
      */
     List<Grade> sendUploadGradeMsg(List<Grade> gradeList);
+
+    /**
+     * 根据学期导出成绩
+     *
+     * @param semesterId 学期id
+     * @return 导出的Excel结果对象
+     */
+    XSSFWorkbook exportGradeBySemester(String semesterId);
 }

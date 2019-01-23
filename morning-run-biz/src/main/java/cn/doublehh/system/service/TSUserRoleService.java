@@ -3,6 +3,8 @@ package cn.doublehh.system.service;
 import cn.doublehh.system.model.TSUserRole;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 人员角色关系表 服务类
@@ -47,4 +49,12 @@ public interface TSUserRoleService extends IService<TSUserRole> {
      * @return
      */
     Integer deleteRolesFromUser(String[] roleIds, String uesrId);
+
+    /**
+     * 根据角色获取用户id列表
+     *
+     * @param roleId
+     * @return 用户id列表
+     */
+    List<String> getUserIdByRoleId(String roleId);
 }
