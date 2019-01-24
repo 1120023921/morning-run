@@ -68,7 +68,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     public Map<String, List<GradeView>> getGradeByJobNumberAndType(String jobNumber, String type) {
-        log.info("GradeViewServiceImpl [getGradeByJobNumberAndType] 获取成绩 jobNumber=" + jobNumber + " type=" + type);
+        log.info("GradeViewServiceImpl [getGradeByJobNumberAndType] 获取体测成绩 jobNumber=" + jobNumber + " type=" + type);
         List<GradeView> gradeViewList = gradeMapper.getGrade(jobNumber, type);
         transferGrade(gradeViewList);
         return gradeViewList.stream().collect(Collectors.groupingBy(gradeView -> gradeView.getGradeCreateTime().substring(0, 4)));
@@ -127,22 +127,12 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     /**
-     * 补全成绩信息
+     * 转换考勤时间
      *
      * @param gradeViewList 成绩列表
      */
     private void transferGrade(List<GradeView> gradeViewList) {
         gradeViewList.forEach(gradeView -> {
-            //获取学期信息
-            Semester semester = semesterService.getSemester(gradeView.getSemesterId());
-            gradeView.setSemester(semester.getSemester());
-            gradeView.setWeight(semester.getWeight());
-            //获取项目信息
-            Item item = itemService.getItem(gradeView.getType(), gradeView.getItemNumber());
-            gradeView.setItemName(item.getItemName());
-            //获取学生信息
-            TSUser tsUser = tsUserService.getUserByUid(gradeView.getJobNumber());
-            gradeView.setName(tsUser.getName());
             //转换考勤机时间
             gradeView.setGradeCreateTime(Utils.transferDateTimeForDevice(gradeView.getGradeCreateTime()));
         });
@@ -193,56 +183,18 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         for (int i = 2; i < GradeEnumForExport.values().length + 2; i++) {
             row.createCell(i).setCellValue(GradeEnumForExport.getItemName(i));
         }
-        List<TSUser> userList = tsUserService.getUserByRoleId("2");
-        List<Item> itemList = itemService.list(new QueryWrapper<>());
-        for (int i = 0; i < 1000; i++) {
-            row = sheet.createRow(i + 1);
-            row.createCell(0).setCellValue(userList.get(i).getUid());
-            row.createCell(1).setCellValue(userList.get(i).getName());
-            List<GradeView> gradeViewList = getGradeByJobNumberAndTypeAndSemester(userList.get(i).getUid(), "02", semesterId);
-            Row finalRow = row;
-            System.out.println(i);
-            gradeViewList.forEach(gradeView -> {
-                Item itemRes = itemList.stream().filter(item -> item.getType().equals(gradeView.getType()) && item.getItemNumber().equals(gradeView.getItemNumber())).collect(Collectors.toList()).get(0);
-                finalRow.createCell(GradeEnumForExport.getIndex(itemRes.getItemName())).setCellValue(transferName(gradeView.getGrade(), itemRes.getItemName()));
-            });
-            List<GradeView> attendanceVoList = getAttendanceVoBySemester(userList.get(i).getUid(), "01", semesterId);
-            attendanceVoList.forEach(gradeView -> {
-                Item itemRes = itemList.stream().filter(item -> item.getType().equals(gradeView.getType()) && item.getItemNumber().equals(gradeView.getItemNumber())).collect(Collectors.toList()).get(0);
-                finalRow.createCell(GradeEnumForExport.getIndex(itemRes.getItemName())).setCellValue(transferName(gradeView.getGrade(), itemRes.getItemName()));
-            });
+        List<GradeView> exportList = gradeMapper.getExportList(semesterId);
+        Map<String, List<GradeView>> exportListGroup = exportList.stream().collect(Collectors.groupingBy(GradeView::getJobNumber));
+        int i = 0;
+        for (Map.Entry<String, List<GradeView>> entry : exportListGroup.entrySet()) {
+            row = sheet.createRow(1 + i++);
+            row.createCell(0).setCellValue(entry.getKey());
+            row.createCell(1).setCellValue(entry.getValue().get(0).getName());
+            for (GradeView gradeView : entry.getValue()) {
+                row.createCell(GradeEnumForExport.getIndex(gradeView.getItemName() == null ? "" : gradeView.getItemName())).setCellValue(transferName(gradeView.getGrade(), gradeView.getItemName() == null ? "" : gradeView.getItemName()));
+            }
         }
         return wb;
-    }
-
-    /**
-     * 根据学期统计学生考勤次数
-     *
-     * @param jobNumber  学号
-     * @param type       项目类型
-     * @param semesterId 学期id
-     * @return
-     */
-    private List<GradeView> getAttendanceVoBySemester(String jobNumber, String type, String semesterId) {
-        log.info("GradeViewServiceImpl [getAttendanceVoBySemester] 获取体教考勤 jobNumber=" + jobNumber + " type=" + type + " semesterId=" + semesterId);
-        List<GradeView> gradeViewList = gradeMapper.getAttendanceGradeBySemester(jobNumber, type, semesterId);
-//        transferGrade(gradeViewList);
-        return gradeViewList;
-    }
-
-    /**
-     * 根据学期获取学生成绩
-     *
-     * @param jobNumber  学号
-     * @param type       项目类型
-     * @param semesterId 学期id
-     * @return 成绩列表
-     */
-    private List<GradeView> getGradeByJobNumberAndTypeAndSemester(String jobNumber, String type, String semesterId) {
-        log.info("GradeViewServiceImpl [getGradeByJobNumberAndTypeAndSemester] 获取成绩 jobNumber=" + jobNumber + " type=" + type + " semesterId=" + semesterId);
-        List<GradeView> gradeViewList = gradeMapper.getGradeBySemester(jobNumber, type, semesterId);
-//        transferGrade(gradeViewList);
-        return gradeViewList;
     }
 
     /**
@@ -251,13 +203,17 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
      * @return 转换后的成绩
      */
     private String transferName(String grade, String itemName) {
-        if (itemName.indexOf("跑") > -1) {
-            return grade.substring(3, 4) + '\'' + grade.substring(4, 6) + '\'' + '\'' + grade.substring(6, 8);
-        } else {
-            if (grade.indexOf(".") > -1) {
-                return String.valueOf(Double.valueOf(grade));
+        try {
+            if (itemName.indexOf("跑") > -1) {
+                return grade.substring(3, 4) + '\'' + grade.substring(4, 6) + '\'' + '\'' + grade.substring(6, 8);
+            } else {
+                if (grade.indexOf(".") > -1) {
+                    return String.valueOf(Double.valueOf(grade));
+                }
+                return String.valueOf(Integer.valueOf(grade));
             }
-            return String.valueOf(Integer.valueOf(grade));
+        } catch (Exception e) {
+            return grade;
         }
     }
 

@@ -32,37 +32,25 @@
     semester_id
     </sql>
     <select id="getGrade" resultMap="GradeToGradeViewMap">
-        SELECT id,
-               job_number,
-               device_number,
-               create_time,
-               MAX(grade_create_time) grade_create_time,
-               grade,
-               item_number,
-               type,
-               semester_id
+        SELECT grade.id,
+               grade.job_number,
+               grade.device_number,
+               MAX(grade.grade_create_time) grade_create_time,
+               grade.grade,
+               item.item_name,
+               grade.semester_id,
+               semester.semester,
+               semester.weight,
+               t_s_user.NAME
         FROM grade
-        WHERE job_number = #{jobNumber}
-          AND type = #{type}
-        GROUP BY type,
-                 item_number
-    </select>
-    <select id="getGradeBySemester" resultMap="GradeToGradeViewMap">
-        SELECT id,
-               job_number,
-               device_number,
-               create_time,
-               grade_create_time,
-               MAX(grade) grade,
-               item_number,
-               type,
-               semester_id
-        FROM grade
-        WHERE job_number = #{jobNumber}
-          AND type = #{type}
-          AND semester_id = #{semesterId}
-        GROUP BY type,
-                 item_number
+                 LEFT JOIN t_s_user ON grade.job_number = t_s_user.uid
+                 LEFT JOIN semester ON grade.semester_id = semester.id
+                 LEFT JOIN item ON grade.type = item.type
+                                       AND grade.item_number = item.item_number
+        WHERE grade.job_number = #{jobNumber}
+          AND grade.type = #{type}
+        GROUP BY grade.type,
+                 grade.item_number
     </select>
     <select id="getAttendanceGrade" resultMap="GradeToGradeViewMap">
         SELECT t1.id,
@@ -73,74 +61,101 @@
                SUM(CAST(t1.grade AS SIGNED)) grade,
                t1.item_number,
                t1.type,
-               t1.semester_id
-        FROM (SELECT id,
-                     job_number,
-                     device_number,
-                     create_time,
-                     grade_create_time,
-                     MAX(grade) grade,
-                     item_number,
-                     type,
-                     semester_id
+               t1.semester_id,
+               t1.item_name,
+               t1.semester,
+               t1.weight,
+               t1.NAME
+        FROM (SELECT grade.id,
+                     grade.job_number,
+                     grade.device_number,
+                     grade.create_time,
+                     grade.grade_create_time,
+                     MAX(grade.grade) grade,
+                     grade.item_number,
+                     grade.type,
+                     grade.semester_id,
+                     item.item_name,
+                     semester.semester,
+                     semester.weight,
+                     t_s_user.NAME
               FROM grade
-              WHERE job_number = #{jobNumber}
-              GROUP BY type,
-                       item_number,
-                       SUBSTR(grade_create_time, 1, 8)) t1
-        WHERE job_number = #{jobNumber}
-          AND type = #{type}
+                       LEFT JOIN t_s_user ON grade.job_number = t_s_user.uid
+                       LEFT JOIN semester ON grade.semester_id = semester.id
+                       LEFT JOIN item ON grade.type = item.type
+                                             AND grade.item_number = item.item_number
+              WHERE grade.job_number = #{jobNumber}
+              GROUP BY grade.type,
+                       grade.item_number,
+                       SUBSTR(grade.grade_create_time, 1, 8)) t1
+        WHERE t1.job_number = #{jobNumber}
+          AND t1.type = #{type}
         GROUP BY t1.type,
                  t1.item_number,
                  t1.semester_id
     </select>
     <select id="getAttendanceGradeDetail" parameterType="cn.doublehh.sport.vo.AttendanceGradeDetailParam"
             resultType="cn.doublehh.sport.vo.GradeView">
-        SELECT id,
-               job_number,
-               device_number,
-               create_time,
-               grade_create_time,
-               CAST(grade AS SIGNED) grade,
-               semester_id,
-               item_number,
-               type
+        SELECT grade.id,
+               grade.job_number,
+               grade.device_number,
+               grade.create_time,
+               grade.grade_create_time,
+               CAST(grade.grade AS SIGNED) grade,
+               grade.semester_id,
+               item.item_name,
+               semester.semester,
+               semester.weight,
+               t_s_user.NAME
         FROM grade
-        WHERE job_number = #{jobNumber}
-          AND semester_id = #{semesterId}
-          AND type = #{type}
-          AND item_number = #{itemNumber}
-        GROUP BY SUBSTR(grade_create_time, 1, 8)
+                 LEFT JOIN t_s_user ON grade.job_number = t_s_user.uid
+                 LEFT JOIN semester ON grade.semester_id = semester.id
+                 LEFT JOIN item ON grade.type = item.type
+                                       AND grade.item_number = item.item_number
+        WHERE grade.job_number = #{jobNumber}
+          AND grade.semester_id = #{semesterId}
+          AND grade.type = #{type}
+          AND grade.item_number = #{itemNumber}
+        GROUP BY SUBSTR(grade.grade_create_time, 1, 8)
     </select>
-    <select id="getAttendanceGradeBySemester" resultMap="GradeToGradeViewMap">
-        SELECT t1.id,
-               t1.job_number,
-               t1.device_number,
-               t1.create_time,
-               t1.grade_create_time,
-               SUM(CAST(t1.grade AS SIGNED)) grade,
-               t1.item_number,
-               t1.type,
-               t1.semester_id
-        FROM (SELECT id,
-                     job_number,
-                     device_number,
-                     create_time,
-                     grade_create_time,
-                     MAX(grade) grade,
-                     item_number,
-                     type,
-                     semester_id
+    <select id="getExportList" resultMap="GradeToGradeViewMap">
+        SELECT res.id, res.job_number, res.grade_create_time, res.grade, res.item_name, t_s_user.NAME
+        FROM (SELECT t1.id, t1.job_number, t1.grade_create_time, SUM(CAST(t1.grade AS SIGNED)) grade, t2.item_name
+              FROM (SELECT id, job_number, grade_create_time, MAX(grade) grade, item_number, semester_id, type
+                    FROM grade
+                    WHERE type = '01'
+                      AND semester_id = #{semesterId}
+                    GROUP BY type,
+                             item_number,
+                             SUBSTR(grade_create_time, 1, 8),
+                             job_number) t1
+                       LEFT JOIN item t2 ON t1.type = t2.type
+                                                AND t1.item_number = t2.item_number
+              GROUP BY t1.type,
+                       t1.item_number,
+                       t1.semester_id,
+                       t1.job_number
+              UNION
+              SELECT grade.id, grade.job_number, grade.grade_create_time, grade.grade, item.item_name
               FROM grade
-              WHERE job_number = #{jobNumber}
-              GROUP BY type,
-                       item_number,
-                       SUBSTR(grade_create_time, 1, 8)) t1
-        WHERE job_number = #{jobNumber}
-          AND type = #{type}
-          AND semester_id = #{semesterId}
-        GROUP BY t1.type,
-                 t1.item_number
+                       LEFT JOIN item ON grade.type = item.type
+                                             AND grade.item_number = item.item_number
+              WHERE grade.semester_id = #{semesterId}
+                AND grade.type = '02'
+              GROUP BY grade.type,
+                       grade.item_number,
+                       grade.job_number
+              UNION
+              SELECT grade.id, grade.job_number, grade.grade_create_time, MAX(grade.grade) grade, item.item_name
+              FROM grade
+                       LEFT JOIN item ON grade.type = item.type
+                                             AND grade.item_number = item.item_number
+              WHERE grade.semester_id = #{semesterId}
+                AND grade.type = '03'
+              GROUP BY grade.type,
+                       grade.item_number,
+                       grade.job_number) res
+                 LEFT JOIN t_s_user ON res.job_number = t_s_user.uid
     </select>
 
 </mapper>
