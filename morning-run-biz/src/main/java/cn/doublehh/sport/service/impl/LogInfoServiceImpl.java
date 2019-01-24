@@ -59,4 +59,10 @@ public class LogInfoServiceImpl extends ServiceImpl<LogInfoMapper, LogInfo> impl
         log.info("LogInfoServiceImpl [findAll] 获取所有访问日志");
         return list(new QueryWrapper<>());
     }
+
+    @Override
+    public List<LogInfo> getAllNoSync() {
+        log.info("LogInfoServiceImpl [getAllNoSync] 获取所有未处理日志");
+        return list(new QueryWrapper<LogInfo>().eq("is_valid", 1).eq("is_sync", 0));
+    }
 }

@@ -35,7 +35,14 @@ public interface LogInfoService extends IService<LogInfo> {
     /**
      * 获取所有日志
      *
-     * @return
+     * @return 日志列表
      */
     List<LogInfo> findAll();
+
+    /**
+     * 获取所有未处理的日志
+     *
+     * @return 日志列表
+     */
+    List<LogInfo> getAllNoSync();
 }
