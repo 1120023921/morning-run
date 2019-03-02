@@ -190,12 +190,10 @@ public class GradeController {
             }
         }
         try {
-            result = gradeService.saveBatch(gradeList);
+//            result = gradeService.saveBatch(gradeList);
             //成绩全部导入成功开始发送消息推送
-            if (result) {
-                new Thread(() -> gradeService.sendUploadGradeMsg(gradeList)).run();
-            }
-            return R.restResult(result, ErrorCodeInfo.SUCCESS);
+            new Thread(() -> gradeService.sendUploadGradeMsg(gradeList)).run();
+            return R.restResult(true, ErrorCodeInfo.SUCCESS);
         } catch (Exception e) {
             log.error("GradeViewController [importGrade]：导入学生成绩失败" + e.getMessage());
             return R.restResult("导入学生成绩失败", ErrorCodeInfo.FAILED);

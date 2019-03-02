@@ -26,6 +26,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -71,7 +72,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         log.info("GradeViewServiceImpl [getGradeByJobNumberAndType] 获取体测成绩 jobNumber=" + jobNumber + " type=" + type);
         List<GradeView> gradeViewList = gradeMapper.getGrade(jobNumber, type);
         transferGrade(gradeViewList);
-        return gradeViewList.stream().collect(Collectors.groupingBy(gradeView -> gradeView.getGradeCreateTime().substring(0, 4)));
+        if(type.equals("01")){
+            return gradeViewList.stream().collect(Collectors.groupingBy(gradeView -> gradeView.getGradeCreateTime().substring(0, 4)));
+        }else {
+            return gradeViewList.stream().collect(Collectors.groupingBy(gradeView -> gradeView.getSemester()));
+        }
     }
 
     @Override
@@ -91,7 +96,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public Boolean uploadGrade(BufferedReader reader, List<Grade> gradeList, String semester) {
         log.info("GradeViewServiceImpl [uploadGrade] 读取文件流上传至数据库");
         String line;
@@ -102,6 +107,19 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 //跳过第一行和不标准数据
                 if (gradeInfo.length < 6 || gradeInfo[0].equals("sno")) {
                     continue;
+                }
+                //判断该学生在该学年该项目是否已经有记录（考勤除外）
+                if (!"01".equals(gradeInfo[2])) {
+                    List<Grade> oldGradeList = list(new QueryWrapper<Grade>().eq("job_number", gradeInfo[0]).eq("semester_id", semester)
+                            .eq("type", gradeInfo[2]).eq("item_number", gradeInfo[1]));
+                    if (!CollectionUtils.isEmpty(oldGradeList)) {
+                        oldGradeList.forEach(oldGrade -> {
+                            oldGrade.setUpdateTime(LocalDateTime.now());
+                            oldGrade.setVersion(oldGrade.getVersion() + 1);
+                            oldGrade.setIsValid(0);
+                            updateById(oldGrade);
+                        });
+                    }
                 }
                 grade = new Grade();
                 grade.setIsValid(1);
@@ -116,7 +134,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 grade.setCreateTime(LocalDateTime.now());
                 grade.setUpdateTime(LocalDateTime.now());
                 grade.setSemesterId(semester);
-                gradeList.add(grade);
+                if(save(grade)){
+                    gradeList.add(grade);
+                }
             }
             reader.close();
         } catch (IOException e) {

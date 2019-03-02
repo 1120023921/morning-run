@@ -35,7 +35,7 @@
         SELECT grade.id,
                grade.job_number,
                grade.device_number,
-               MAX(grade.grade_create_time) grade_create_time,
+               grade.grade_create_time,
                grade.grade,
                item.item_name,
                grade.semester_id,
@@ -49,8 +49,7 @@
                                        AND grade.item_number = item.item_number
         WHERE grade.job_number = #{jobNumber}
           AND grade.type = #{type}
-        GROUP BY grade.type,
-                 grade.item_number
+          AND grade.is_valid = '1'
     </select>
     <select id="getAttendanceGrade" resultMap="GradeToGradeViewMap">
         SELECT t1.id,
@@ -85,8 +84,10 @@
                        LEFT JOIN item ON grade.type = item.type
                                              AND grade.item_number = item.item_number
               WHERE grade.job_number = #{jobNumber}
+                AND grade.is_valid = '1'
               GROUP BY grade.type,
                        grade.item_number,
+                       grade.semester_id,
                        SUBSTR(grade.grade_create_time, 1, 8)) t1
         WHERE t1.job_number = #{jobNumber}
           AND t1.type = #{type}
@@ -116,6 +117,7 @@
           AND grade.semester_id = #{semesterId}
           AND grade.type = #{type}
           AND grade.item_number = #{itemNumber}
+          AND grade.is_valid = '1'
         GROUP BY SUBSTR(grade.grade_create_time, 1, 8)
     </select>
     <select id="getExportList" resultMap="GradeToGradeViewMap">
@@ -125,6 +127,7 @@
                     FROM grade
                     WHERE type = '01'
                       AND semester_id = #{semesterId}
+                      AND grade.is_valid = '1'
                     GROUP BY type,
                              item_number,
                              SUBSTR(grade_create_time, 1, 8),
@@ -142,16 +145,18 @@
                                              AND grade.item_number = item.item_number
               WHERE grade.semester_id = #{semesterId}
                 AND grade.type = '02'
+                AND grade.is_valid = '1'
               GROUP BY grade.type,
                        grade.item_number,
                        grade.job_number
               UNION
-              SELECT grade.id, grade.job_number, grade.grade_create_time, MAX(grade.grade) grade, item.item_name
+              SELECT grade.id, grade.job_number, grade.grade_create_time, grade.grade, item.item_name
               FROM grade
                        LEFT JOIN item ON grade.type = item.type
                                              AND grade.item_number = item.item_number
               WHERE grade.semester_id = #{semesterId}
                 AND grade.type = '03'
+                AND grade.is_valid = '1'
               GROUP BY grade.type,
                        grade.item_number,
                        grade.job_number) res
