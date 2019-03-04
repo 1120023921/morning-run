@@ -72,9 +72,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         log.info("GradeViewServiceImpl [getGradeByJobNumberAndType] 获取体测成绩 jobNumber=" + jobNumber + " type=" + type);
         List<GradeView> gradeViewList = gradeMapper.getGrade(jobNumber, type);
         transferGrade(gradeViewList);
-        if(type.equals("01")){
+        if (type.equals("01")) {
             return gradeViewList.stream().collect(Collectors.groupingBy(gradeView -> gradeView.getGradeCreateTime().substring(0, 4)));
-        }else {
+        } else {
             return gradeViewList.stream().collect(Collectors.groupingBy(gradeView -> gradeView.getSemester()));
         }
     }
@@ -134,7 +134,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 grade.setCreateTime(LocalDateTime.now());
                 grade.setUpdateTime(LocalDateTime.now());
                 grade.setSemesterId(semester);
-                if(save(grade)){
+                if (save(grade)) {
                     gradeList.add(grade);
                 }
             }
@@ -227,6 +227,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             if (itemName.indexOf("跑") > -1) {
                 return grade.substring(3, 4) + '\'' + grade.substring(4, 6) + '\'' + '\'' + grade.substring(6, 8);
             } else {
+                if (grade.indexOf("-") > -1) {
+                    grade = grade.substring(grade.indexOf("-"));
+                }
                 if (grade.indexOf(".") > -1) {
                     return String.valueOf(Double.valueOf(grade));
                 }

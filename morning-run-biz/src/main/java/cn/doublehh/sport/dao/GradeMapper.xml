@@ -57,7 +57,10 @@
                t1.device_number,
                t1.create_time,
                t1.grade_create_time,
-               SUM(CAST(t1.grade AS SIGNED)) grade,
+               SUM(CASE LOCATE('-', t1.grade)
+                       WHEN 0 THEN CONVERT(t1.grade, signed)
+                       ELSE CONVERT(CONCAT('-', SUBSTRING_INDEX(t1.grade, '-', -1)), signed)
+                           END) grade,
                t1.item_number,
                t1.type,
                t1.semester_id,
@@ -102,7 +105,10 @@
                grade.device_number,
                grade.create_time,
                grade.grade_create_time,
-               CAST(grade.grade AS SIGNED) grade,
+               CASE LOCATE('-', grade.grade)
+                   WHEN 0 THEN CONVERT(grade.grade, signed)
+                   ELSE CONVERT(CONCAT('-', SUBSTRING_INDEX(grade.grade, '-', -1)), signed)
+                       END grade,
                grade.semester_id,
                item.item_name,
                semester.semester,
@@ -122,7 +128,10 @@
     </select>
     <select id="getExportList" resultMap="GradeToGradeViewMap">
         SELECT res.id, res.job_number, res.grade_create_time, res.grade, res.item_name, t_s_user.NAME
-        FROM (SELECT t1.id, t1.job_number, t1.grade_create_time, SUM(CAST(t1.grade AS SIGNED)) grade, t2.item_name
+        FROM (SELECT t1.id, t1.job_number, t1.grade_create_time, SUM(CASE LOCATE('-', t1.grade)
+                                                                         WHEN 0 THEN CONVERT(t1.grade, signed)
+                                                                         ELSE CONVERT(CONCAT('-', SUBSTRING_INDEX(t1.grade, '-', -1)), signed)
+                                                                             END) grade, t2.item_name
               FROM (SELECT id, job_number, grade_create_time, MAX(grade) grade, item_number, semester_id, type
                     FROM grade
                     WHERE type = '01'
