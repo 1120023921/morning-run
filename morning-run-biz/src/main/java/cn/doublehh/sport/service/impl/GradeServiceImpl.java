@@ -136,7 +136,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Scheduled(cron = "00 00 06 ? * *")
     @Override
-    public Boolean updateGradeFromTmp() {
+    public synchronized Boolean updateGradeFromTmp() {
         log.info("GradeViewServiceImpl [updateGradeFromTmp] 从临时表中更新成绩数据");
         List<Grade> tmpGradeList = gradeMapper.getTmpGradeList();
         tmpGradeList.forEach(tmpGrade -> {
