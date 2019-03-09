@@ -25,6 +25,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,7 +98,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional
     public Boolean uploadGrade(BufferedReader reader, List<Grade> gradeList, String semester) {
         log.info("GradeViewServiceImpl [uploadGrade] 读取文件流上传至数据库");
         String line;
@@ -107,19 +109,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 //跳过第一行和不标准数据
                 if (gradeInfo.length < 6 || gradeInfo[0].equals("sno")) {
                     continue;
-                }
-                //判断该学生在该学年该项目是否已经有记录（考勤除外）
-                if (!"01".equals(gradeInfo[2])) {
-                    List<Grade> oldGradeList = list(new QueryWrapper<Grade>().eq("job_number", gradeInfo[0]).eq("semester_id", semester)
-                            .eq("type", gradeInfo[2]).eq("item_number", gradeInfo[1]));
-                    if (!CollectionUtils.isEmpty(oldGradeList)) {
-                        oldGradeList.forEach(oldGrade -> {
-                            oldGrade.setUpdateTime(LocalDateTime.now());
-                            oldGrade.setVersion(oldGrade.getVersion() + 1);
-                            oldGrade.setIsValid(0);
-                            updateById(oldGrade);
-                        });
-                    }
                 }
                 grade = new Grade();
                 grade.setIsValid(1);
@@ -134,9 +123,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 grade.setCreateTime(LocalDateTime.now());
                 grade.setUpdateTime(LocalDateTime.now());
                 grade.setSemesterId(semester);
-                if (save(grade)) {
-                    gradeList.add(grade);
-                }
+                //添加成绩到临时表
+                gradeMapper.insertTmpGrade(grade);
             }
             reader.close();
         } catch (IOException e) {
@@ -144,6 +132,41 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             return false;
         }
         return true;
+    }
+
+    @Scheduled(cron = "00 00 06 ? * *")
+    @Override
+    public Boolean updateGradeFromTmp() {
+        log.info("GradeViewServiceImpl [updateGradeFromTmp] 从临时表中更新成绩数据");
+        List<Grade> tmpGradeList = gradeMapper.getTmpGradeList();
+        tmpGradeList.forEach(tmpGrade -> {
+            //判断该学生在该学年该项目是否已经有记录（考勤除外）
+            if (!"01".equals(tmpGrade.getType())) {
+                List<Grade> oldGradeList = list(new QueryWrapper<Grade>().eq("job_number", tmpGrade.getJobNumber()).eq("semester_id", tmpGrade.getSemesterId())
+                        .eq("type", tmpGrade.getType()).eq("item_number", tmpGrade.getItemNumber()));
+                if (!CollectionUtils.isEmpty(oldGradeList)) {
+                    oldGradeList.forEach(oldGrade -> {
+                        oldGrade.setUpdateTime(LocalDateTime.now());
+                        oldGrade.setVersion(oldGrade.getVersion() + 1);
+                        oldGrade.setIsValid(0);
+                        updateById(oldGrade);
+                    });
+                }
+            }
+        });
+        //开始添加数据
+        Boolean insertResult = gradeMapper.insertGradeFromTmp();
+        if (!insertResult) {
+            log.info("GradeViewServiceImpl [updateGradeFromTmp] 从临时表中想成绩表添加数据失败");
+        }
+        //删除临时表中数据
+        Boolean deleteResult = gradeMapper.deleteGradeTmp();
+        if (!deleteResult) {
+            log.info("GradeViewServiceImpl [updateGradeFromTmp] 删除临时表数据失败");
+        }
+        //发送成绩更新提醒
+        sendUploadGradeMsg(tmpGradeList);
+        return insertResult;
     }
 
     /**
@@ -158,6 +181,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         });
     }
 
+    @Async
     @Override
     public List<Grade> sendUploadGradeMsg(List<Grade> gradeList) {
         log.info("GradeViewServiceImpl [sendUploadGradeMsg] 发送新成绩上传提醒");

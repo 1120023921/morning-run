@@ -51,4 +51,33 @@ public interface GradeMapper extends BaseMapper<Grade> {
      * @return
      */
     List<GradeView> getExportList(@Param("semesterId") String semesterId);
+
+    /**
+     * 添加新成绩到临时表
+     *
+     * @param grade 成绩信息
+     * @return 添加结果
+     */
+    Boolean insertTmpGrade(Grade grade);
+
+    /**
+     * 从临时表向成绩表中添加数据
+     *
+     * @return 添加结果
+     */
+    Boolean insertGradeFromTmp();
+
+    /**
+     * 删除临时表中的数据
+     *
+     * @return
+     */
+    Boolean deleteGradeTmp();
+
+    /**
+     * 获取临时表中的成绩数据
+     *
+     * @return 成绩列表
+     */
+    List<Grade> getTmpGradeList();
 }

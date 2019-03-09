@@ -85,7 +85,7 @@ public class LogInfoController {
         }
     }
 
-    @Scheduled(cron = "00 00 04 ? * *")
+//    @Scheduled(cron = "00 00 04 ? * *")
     @Async
     @GetMapping(value = "/syncLogInfo")
     public R syncLogInfo() {

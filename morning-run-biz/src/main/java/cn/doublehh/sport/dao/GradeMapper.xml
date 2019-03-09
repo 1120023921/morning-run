@@ -28,9 +28,22 @@
         <result column="semester_id" property="semesterId"/>
         <result column="grade_create_time" property="gradeCreateTime"/>
     </resultMap>
-    <sql id="BaseSql">id, job_number, device_number, create_time, grade_create_time, grade, item_number, type,
-    semester_id
+    <sql id="BaseSql">id, job_number, device_number, create_time, update_time, grade_create_time, grade, item_number, type,
+    semester_id, version, is_valid
     </sql>
+    <insert id="insertTmpGrade" parameterType="cn.doublehh.sport.model.Grade">
+        INSERT INTO grade_tmp(<include refid="BaseSql"/>) VALUES
+        (#{id},#{jobNumber},#{deviceNumber},#{createTime},#{updateTime},#{gradeCreateTime},#{grade},#{itemNumber},#{type},#{semesterId},#{version},#{isValid})
+    </insert>
+    <insert id="insertGradeFromTmp">
+        INSERT INTO grade(<include refid="BaseSql"/>) (SELECT
+        <include refid="BaseSql"/>
+        FROM grade_tmp)
+    </insert>
+    <delete id="deleteGradeTmp">
+        DELETE
+        FROM grade_tmp
+    </delete>
     <select id="getGrade" resultMap="GradeToGradeViewMap">
         SELECT grade.id,
                grade.job_number,
@@ -170,6 +183,11 @@
                        grade.item_number,
                        grade.job_number) res
                  LEFT JOIN t_s_user ON res.job_number = t_s_user.uid
+    </select>
+    <select id="getTmpGradeList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BaseSql"/>
+        FROM grade_tmp
     </select>
 
 </mapper>

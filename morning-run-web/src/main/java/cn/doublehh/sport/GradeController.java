@@ -48,7 +48,7 @@ public class GradeController {
      * @param gradeParams 查询条件对象
      * @return 体质测试成绩列表
      */
-    @Cacheable(value = "GradeController:getGradeByJobNumberAndType")
+//    @Cacheable(value = "GradeController:getGradeByJobNumberAndType")
     @RequestMapping(value = "/getGradeByJobNumberAndType", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public R<Map<String, List<GradeView>>> getGradeByJobNumberAndType(@RequestBody GradeParams gradeParams) {
         Map<String, List<GradeView>> gradeList = gradeService.getGradeByJobNumberAndType(DesUtil.decrypt(gradeParams.getJobNumber()), gradeParams.getType());
@@ -74,7 +74,7 @@ public class GradeController {
      * @param gradeParams 查询条件对象
      * @return 体教考勤成绩列表
      */
-    @Cacheable(value = "GradeController:getAttendanceVo")
+//    @Cacheable(value = "GradeController:getAttendanceVo")
     @RequestMapping(value = "/getAttendanceVo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public R<Map<String, List<GradeView>>> getAttendanceVo(@RequestBody GradeParams gradeParams) {
         Map<String, List<GradeView>> attendanceList = gradeService.getAttendanceVo(DesUtil.decrypt(gradeParams.getJobNumber()), gradeParams.getType());
@@ -100,7 +100,7 @@ public class GradeController {
      * @param attendanceGradeDetailParam 查询考勤成绩详情参数封装类
      * @return 体教考勤详细信息
      */
-    @Cacheable(value = "GradeController:getAttendanceGradeDetail", key = "#attendanceGradeDetailParam.jobNumber+#attendanceGradeDetailParam.semesterId+#attendanceGradeDetailParam.type+#attendanceGradeDetailParam.itemNumber")
+//    @Cacheable(value = "GradeController:getAttendanceGradeDetail", key = "#attendanceGradeDetailParam.jobNumber+#attendanceGradeDetailParam.semesterId+#attendanceGradeDetailParam.type+#attendanceGradeDetailParam.itemNumber")
     @RequestMapping(value = "/getAttendanceGradeDetail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public R<List<GradeView>> getAttendanceGradeDetail(@RequestBody AttendanceGradeDetailParam attendanceGradeDetailParam) {
         attendanceGradeDetailParam.setJobNumber(DesUtil.decrypt(attendanceGradeDetailParam.getJobNumber()));
@@ -167,7 +167,7 @@ public class GradeController {
      * @param semester       学期
      * @return 导入结果
      */
-    @CacheEvict(value = {"GradeController:getGradeByJobNumberAndType", "GradeController:getAttendanceVo", "GradeController:getAttendanceGradeDetail"}, allEntries = true)
+//    @CacheEvict(value = {"GradeController:getGradeByJobNumberAndType", "GradeController:getAttendanceVo", "GradeController:getAttendanceGradeDetail"}, allEntries = true)
     @NeedPermission(roleIds = {"admin", "teacher"})
     @RequestMapping(value = "/importGrade", method = RequestMethod.POST)
     public R importGrade(MultipartFile[] multipartFiles, String semester) {
@@ -175,7 +175,6 @@ public class GradeController {
         Assert.notEmpty(multipartFiles, "文件不能为空");
         BufferedReader reader;
         List<Grade> gradeList = new ArrayList<>();
-        boolean result;
         for (MultipartFile multipartFile : multipartFiles) {
             String fileType = multipartFile.getOriginalFilename().substring(Objects.requireNonNull(multipartFile.getOriginalFilename()).indexOf('.') + 1);
             if (!"txt".equals(fileType)) {
@@ -189,15 +188,17 @@ public class GradeController {
                 return R.restResult("获取文件输入流失败", ErrorCodeInfo.FAILED);
             }
         }
-        try {
-//            result = gradeService.saveBatch(gradeList);
-            //成绩全部导入成功开始发送消息推送
-            new Thread(() -> gradeService.sendUploadGradeMsg(gradeList)).run();
-            return R.restResult(true, ErrorCodeInfo.SUCCESS);
-        } catch (Exception e) {
-            log.error("GradeViewController [importGrade]：导入学生成绩失败" + e.getMessage());
-            return R.restResult("导入学生成绩失败", ErrorCodeInfo.FAILED);
-        }
+        return R.restResult(true, ErrorCodeInfo.SUCCESS);
+    }
+
+    /**
+     * 从临时表中更新数据
+     *
+     * @return
+     */
+    @GetMapping("/updateGradeFromTmp")
+    public R updateGradeFromTmp() {
+        return R.restResult(gradeService.updateGradeFromTmp(), ErrorCodeInfo.SUCCESS);
     }
 
     /**

@@ -56,6 +56,13 @@ public interface GradeService extends IService<Grade> {
     Boolean uploadGrade(BufferedReader reader, List<Grade> gradeList, String semester);
 
     /**
+     * 从临时表中更新数据
+     *
+     * @return
+     */
+    Boolean updateGradeFromTmp();
+
+    /**
      * 上传成绩消息提醒
      *
      * @param gradeList 成绩列表
