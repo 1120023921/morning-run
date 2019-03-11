@@ -202,8 +202,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 templateMessage.addData(new WxMpTemplateData("keyword2", tsUser.getName(), "#173177"));
                 templateMessage.addData(new WxMpTemplateData("keyword3", LocalDateTime.now().format(df), "#173177"));
                 try {
+                    Thread.sleep(1000L);
                     wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
-                } catch (WxErrorException e) {
+                } catch (WxErrorException | InterruptedException e) {
                     result.add(grade);
                 }
             } else {
