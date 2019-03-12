@@ -183,7 +183,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Async
     @Override
-    public List<Grade> sendUploadGradeMsg(List<Grade> gradeList) {
+    public synchronized List<Grade> sendUploadGradeMsg(List<Grade> gradeList) {
         log.info("GradeViewServiceImpl [sendUploadGradeMsg] 发送新成绩上传提醒");
         List<Grade> result = new LinkedList<>();
         gradeList = gradeList.stream().collect(collectingAndThen(
@@ -202,7 +202,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 templateMessage.addData(new WxMpTemplateData("keyword2", tsUser.getName(), "#173177"));
                 templateMessage.addData(new WxMpTemplateData("keyword3", LocalDateTime.now().format(df), "#173177"));
                 try {
-                    Thread.sleep(1000L);
+                    Thread.sleep(2000L);
                     wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
                 } catch (WxErrorException | InterruptedException e) {
                     result.add(grade);

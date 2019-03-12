@@ -58,7 +58,7 @@ public class LogInfoController {
             List<LogInfo> logInfoList = logInfoService.getTodayLog();
             if (!CollectionUtils.isEmpty(logInfoList)) {
                 num = logInfoList.size();
-                redisTemplate.opsForValue().set("todayLogNum", num, 600L, TimeUnit.SECONDS);
+                redisTemplate.opsForValue().set("todayLogNum", num, 3600L, TimeUnit.SECONDS);
             }
             return R.restResult(num, ErrorCodeInfo.SUCCESS);
         }
@@ -79,7 +79,7 @@ public class LogInfoController {
             List<LogInfo> logInfoList = logInfoService.findAll();
             if (!CollectionUtils.isEmpty(logInfoList)) {
                 num = logInfoList.size();
-                redisTemplate.opsForValue().set("allLogNum", num, 600L, TimeUnit.SECONDS);
+                redisTemplate.opsForValue().set("allLogNum", num, 3600L, TimeUnit.SECONDS);
             }
             return R.restResult(num, ErrorCodeInfo.SUCCESS);
         }

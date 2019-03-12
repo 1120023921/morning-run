@@ -21,12 +21,6 @@ import cn.doublehh.system.service.TSUserService;
 import com.baomidou.mybatisplus.extension.api.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -121,39 +115,39 @@ public class SystemController {
      * @param session
      * @return
      */
-    @ApiOperation(value = "用户登录", notes = "用户登录", httpMethod = "POST")
-    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public R login(@RequestBody TSUser user, HttpSession session) {
-        ErrorCode errorCode = new ErrorCode();
-//		String sysCheckCode = (String) session.getAttribute("loginRand");
-//		if(!sysCheckCode.equals(checkCode)) {
-//			result.setSuccess(false);
-//			result.setMsg("验证码错误");
-//			return result;
-//		}
-        user.setPassword(MD5Utils.generateToken(user.getPassword()));
-        UsernamePasswordToken token = new UsernamePasswordToken(user.getUid(), user.getPassword());
-        TSUser userWithRoles = null;
-        try {
-            Subject subject = SecurityUtils.getSubject();
-            subject.login(token);
-            userWithRoles = userService.getUserWithRolesByUid(user.getUid());
-            userWithRoles.setPassword(null);
-            session.setAttribute("user", userWithRoles);
-            errorCode.setCode(ErrorCode.OK);
-            errorCode.setMsg(ErrorCode.OK_MSG);
-        } catch (UnknownAccountException e) {
-            errorCode.setCode(ErrorCode.NOT_FOUND);
-            errorCode.setMsg(USER_NOT_FOUNFD);
-        } catch (LockedAccountException e) {
-            errorCode.setCode(ErrorCode.FORBIDDEN);
-            errorCode.setMsg(USER_LOCKED);
-        } catch (AuthenticationException e) {
-            errorCode.setCode(ErrorCode.FORBIDDEN);
-            errorCode.setMsg(LOGIN_INFO_ERROR);
-        }
-        return R.restResult(userWithRoles, errorCode);
-    }
+//    @ApiOperation(value = "用户登录", notes = "用户登录", httpMethod = "POST")
+//    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public R login(@RequestBody TSUser user, HttpSession session) {
+//        ErrorCode errorCode = new ErrorCode();
+////		String sysCheckCode = (String) session.getAttribute("loginRand");
+////		if(!sysCheckCode.equals(checkCode)) {
+////			result.setSuccess(false);
+////			result.setMsg("验证码错误");
+////			return result;
+////		}
+//        user.setPassword(MD5Utils.generateToken(user.getPassword()));
+//        UsernamePasswordToken token = new UsernamePasswordToken(user.getUid(), user.getPassword());
+//        TSUser userWithRoles = null;
+//        try {
+//            Subject subject = SecurityUtils.getSubject();
+//            subject.login(token);
+//            userWithRoles = userService.getUserWithRolesByUid(user.getUid());
+//            userWithRoles.setPassword(null);
+//            session.setAttribute("user", userWithRoles);
+//            errorCode.setCode(ErrorCode.OK);
+//            errorCode.setMsg(ErrorCode.OK_MSG);
+//        } catch (UnknownAccountException e) {
+//            errorCode.setCode(ErrorCode.NOT_FOUND);
+//            errorCode.setMsg(USER_NOT_FOUNFD);
+//        } catch (LockedAccountException e) {
+//            errorCode.setCode(ErrorCode.FORBIDDEN);
+//            errorCode.setMsg(USER_LOCKED);
+//        } catch (AuthenticationException e) {
+//            errorCode.setCode(ErrorCode.FORBIDDEN);
+//            errorCode.setMsg(LOGIN_INFO_ERROR);
+//        }
+//        return R.restResult(userWithRoles, errorCode);
+//    }
 
     /**
      * 用户注册
