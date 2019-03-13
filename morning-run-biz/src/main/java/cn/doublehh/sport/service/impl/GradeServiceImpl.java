@@ -124,6 +124,13 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 grade.setUpdateTime(LocalDateTime.now());
                 grade.setSemesterId(semester);
                 //添加成绩到临时表
+                List<Grade> oldGradeTmpList = gradeMapper.getGradeTmpOld(grade);
+                if (!CollectionUtils.isEmpty(oldGradeTmpList)) {
+                    oldGradeTmpList.forEach(oldGradeTmp -> {
+                        oldGradeTmp.setIsValid(0);
+                        gradeMapper.deleteOldGradeTmp(oldGradeTmp);
+                    });
+                }
                 gradeMapper.insertTmpGrade(grade);
             }
             reader.close();
@@ -202,7 +209,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 templateMessage.addData(new WxMpTemplateData("keyword2", tsUser.getName(), "#173177"));
                 templateMessage.addData(new WxMpTemplateData("keyword3", LocalDateTime.now().format(df), "#173177"));
                 try {
-                    Thread.sleep(2000L);
+                    Thread.sleep(1000L);
                     wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
                 } catch (WxErrorException | InterruptedException e) {
                     result.add(grade);

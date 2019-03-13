@@ -80,4 +80,20 @@ public interface GradeMapper extends BaseMapper<Grade> {
      * @return 成绩列表
      */
     List<Grade> getTmpGradeList();
+
+    /**
+     * 获取老数据（新数据上次去重用）
+     *
+     * @param grade
+     * @return
+     */
+    List<Grade> getGradeTmpOld(Grade grade);
+
+    /**
+     * 删除老成绩
+     *
+     * @param grade
+     * @return
+     */
+    Boolean deleteOldGradeTmp(Grade grade);
 }

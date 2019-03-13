@@ -44,6 +44,11 @@
         DELETE
         FROM grade_tmp
     </delete>
+    <delete id="deleteOldGradeTmp" parameterType="cn.doublehh.sport.model.Grade">
+        UPDATE grade_tmp
+        SET is_valid = #{isValid}
+        WHERE id = #{id}
+    </delete>
     <select id="getGrade" resultMap="GradeToGradeViewMap">
         SELECT grade.id,
                grade.job_number,
@@ -188,6 +193,12 @@
         SELECT
         <include refid="BaseSql"/>
         FROM grade_tmp
+    </select>
+    <select id="getGradeTmpOld" parameterType="cn.doublehh.sport.model.Grade" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BaseSql"/>
+        FROM grade_tmp WHERE job_number=#{jobNumber} AND type=#{type} AND item_number=#{itemNumber} AND
+        semester_id=#{semesterId}
     </select>
 
 </mapper>
