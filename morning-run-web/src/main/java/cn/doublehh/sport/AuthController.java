@@ -15,6 +15,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -46,6 +48,8 @@ public class AuthController {
     private WechatConstant wechatConstant;
     @Autowired
     private LogInfoService logInfoService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @RequestMapping("/login")
     public String login(@PathVariable String appid, @RequestParam String code, String state, HttpServletRequest request) throws WxErrorException {
@@ -66,7 +70,8 @@ public class AuthController {
                 logInfo.setDescription("绑定");
                 logInfoService.addLogInfo(userAgentInfo, logInfo);
                 String token = UUID.randomUUID().toString();
-                openidMap.put(token, wxMpUser.getOpenId());
+                redisTemplate.opsForValue().set(token, wxMpUser.getOpenId(), 300L, TimeUnit.SECONDS);
+//                openidMap.put(token, wxMpUser.getOpenId());
                 return "redirect:" + wechatConstant.getDomainWeb() + "/#/bindInfo?token=" + token;
             } else {
                 logInfo.setUserId(user.getUid());

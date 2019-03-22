@@ -16,6 +16,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +42,8 @@ public class UserController {
 
     @Autowired
     private TSUserService tsUserService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 绑定微信openid
@@ -57,13 +60,14 @@ public class UserController {
         if (null == tsUser) {
             throw new RuntimeException("输入信息有误，请检查后重新输入");
         }
-        String openid = AuthController.openidMap.get(token);
+        String openid = (String) redisTemplate.opsForValue().get(token);
+//        String openid = AuthController.openidMap.get(token);
         if (StringUtils.isEmpty(openid)) {
             throw new RuntimeException("无效token");
         }
         tsUser.setWechatOpenid(openid);
         //使用完后清理map
-        AuthController.openidMap.remove(token);
+//        AuthController.openidMap.remove(token);
         tsUser.setUpdateTime(LocalDateTime.now());
         boolean res = tsUserService.updateById(tsUser);
         if (res) {
@@ -83,7 +87,7 @@ public class UserController {
     @ApiOperation(value = "导入学生信息", httpMethod = "POST")
     @RequestMapping(value = "/importStudentInfo", method = RequestMethod.POST)
     public R importStudentInfo(MultipartFile multipartFile) {
-        Assert.notNull(multipartFile,"文件不能为空");
+        Assert.notNull(multipartFile, "文件不能为空");
         try {
             if (tsUserService.importStudentInfo(multipartFile.getInputStream())) {
                 return R.restResult(null, ErrorCodeInfo.SUCCESS);
