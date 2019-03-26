@@ -55,9 +55,21 @@ public class LogInfoServiceImpl extends ServiceImpl<LogInfoMapper, LogInfo> impl
     }
 
     @Override
+    public Integer getTodayLogNum() {
+        log.info("LogInfoServiceImpl [getTodayLogNum] 获取当天访问日志");
+        return logInfoMapper.getTodayLogNum(LocalDate.now().toString(), LocalDate.now().plusDays(1L).toString());
+    }
+
+    @Override
     public List<LogInfo> findAll() {
         log.info("LogInfoServiceImpl [findAll] 获取所有访问日志");
         return list(new QueryWrapper<>());
+    }
+
+    @Override
+    public Integer getAllLogNum() {
+        log.info("LogInfoServiceImpl [getAllLogNum] 获取所有访问日志数量");
+        return logInfoMapper.getAllLogNum();
     }
 
     @Override

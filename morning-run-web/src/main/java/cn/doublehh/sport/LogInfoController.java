@@ -54,12 +54,13 @@ public class LogInfoController {
         if (null != todayLogNum) {
             return R.restResult(todayLogNum, ErrorCodeInfo.SUCCESS);
         } else {
-            int num = 0;
-            List<LogInfo> logInfoList = logInfoService.getTodayLog();
-            if (!CollectionUtils.isEmpty(logInfoList)) {
-                num = logInfoList.size();
-                redisTemplate.opsForValue().set("todayLogNum", num, 3600L, TimeUnit.SECONDS);
-            }
+            int num = logInfoService.getTodayLogNum();
+//            List<LogInfo> logInfoList = logInfoService.getTodayLog();
+//            if (!CollectionUtils.isEmpty(logInfoList)) {
+//                num = logInfoList.size();
+//                redisTemplate.opsForValue().set("todayLogNum", num, 3600L, TimeUnit.SECONDS);
+//            }
+            redisTemplate.opsForValue().set("todayLogNum", num, 3600L, TimeUnit.SECONDS);
             return R.restResult(num, ErrorCodeInfo.SUCCESS);
         }
     }
@@ -75,17 +76,18 @@ public class LogInfoController {
         if (null != todayLogNum) {
             return R.restResult(todayLogNum, ErrorCodeInfo.SUCCESS);
         } else {
-            int num = 0;
-            List<LogInfo> logInfoList = logInfoService.findAll();
-            if (!CollectionUtils.isEmpty(logInfoList)) {
-                num = logInfoList.size();
-                redisTemplate.opsForValue().set("allLogNum", num, 3600L, TimeUnit.SECONDS);
-            }
+            int num = logInfoService.getAllLogNum();
+//            List<LogInfo> logInfoList = logInfoService.findAll();
+//            if (!CollectionUtils.isEmpty(logInfoList)) {
+//                num = logInfoList.size();
+//                redisTemplate.opsForValue().set("allLogNum", num, 3600L, TimeUnit.SECONDS);
+//            }
+            redisTemplate.opsForValue().set("allLogNum", num, 3600L, TimeUnit.SECONDS);
             return R.restResult(num, ErrorCodeInfo.SUCCESS);
         }
     }
 
-//    @Scheduled(cron = "00 00 04 ? * *")
+    //    @Scheduled(cron = "00 00 04 ? * *")
     @Async
     @GetMapping(value = "/syncLogInfo")
     public R syncLogInfo() {

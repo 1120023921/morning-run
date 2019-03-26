@@ -32,5 +32,15 @@
         <include refid="BaseSql"/>
         FROM log_info WHERE create_time >= #{today} AND create_time &lt; #{tomorrow}
     </select>
+    <select id="getAllLogNum" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM log_info
+    </select>
+    <select id="getTodayLogNum" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT COUNT(1)
+        FROM log_info
+        WHERE create_time >= #{today}
+          AND create_time &lt; #{tomorrow}
+    </select>
 
 </mapper>

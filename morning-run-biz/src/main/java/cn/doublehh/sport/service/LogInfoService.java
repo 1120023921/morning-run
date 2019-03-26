@@ -33,11 +33,25 @@ public interface LogInfoService extends IService<LogInfo> {
     List<LogInfo> getTodayLog();
 
     /**
+     * 获取当天日志数量
+     *
+     * @return 日志数量
+     */
+    Integer getTodayLogNum();
+
+    /**
      * 获取所有日志
      *
      * @return 日志列表
      */
     List<LogInfo> findAll();
+
+    /**
+     * 获取所有日志数
+     *
+     * @return 日志数
+     */
+    Integer getAllLogNum();
 
     /**
      * 获取所有未处理的日志
