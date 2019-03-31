@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -200,7 +201,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         gradeList.forEach(grade -> {
             TSUser tsUser = tsUserService.getUserByUid(grade.getJobNumber());
 //            Assert.notNull(tsUser, "uid对应的用户不存在");
-            if (null != tsUser) {
+            if (null != tsUser && !StringUtils.isEmpty(tsUser.getWechatOpenid())) {
                 WxMpTemplateMessage templateMessage = WxMpTemplateMessage.builder()
                         .toUser(tsUser.getWechatOpenid())
                         .templateId(wechatConstant.getUploadGradeMsgId())
@@ -210,14 +211,19 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 templateMessage.addData(new WxMpTemplateData("keyword1", grade.getJobNumber(), "#173177"));
                 templateMessage.addData(new WxMpTemplateData("keyword2", tsUser.getName(), "#173177"));
                 templateMessage.addData(new WxMpTemplateData("keyword3", LocalDateTime.now().format(df), "#173177"));
+//                try {
+//                    Thread.sleep(2000L);
+//                    wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
+//                } catch (WxErrorException | InterruptedException e) {
+//                    result.add(grade);
+//                }
                 try {
-                    Thread.sleep(2000L);
                     wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
-                } catch (WxErrorException | InterruptedException e) {
+                } catch (WxErrorException e) {
                     result.add(grade);
                 }
             } else {
-                result.add(grade);
+//                result.add(grade);
             }
         });
         if (!CollectionUtils.isEmpty(result)) {
