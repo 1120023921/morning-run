@@ -235,13 +235,23 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     @Override
     public XSSFWorkbook exportGradeBySemester(String semesterId) {
         log.info("GradeViewServiceImpl [exportGradeBySemester] 导出学生成绩 semesterId=" + semesterId);
+        List<Item> itemList = itemService.list(new QueryWrapper<Item>().orderByAsc("type", "item_number"));
+        Map<String, Integer> itemMap = new HashMap<>();
+        Map<Integer, String> itemKeyMap = new TreeMap<>();
+        itemList.forEach(item -> {
+            itemMap.put(item.getItemName(), Integer.valueOf(item.getId()));
+            itemKeyMap.put(Integer.valueOf(item.getId()), item.getItemName());
+        });
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet("学生成绩");
         Row row = sheet.createRow(0);
         row.createCell(0).setCellValue("学号");
         row.createCell(1).setCellValue("姓名");
-        for (int i = 2; i < GradeEnumForExport.values().length + 2; i++) {
-            row.createCell(i).setCellValue(GradeEnumForExport.getItemName(i));
+//        for (int i = 2; i < GradeEnumForExport.values().length + 2; i++) {
+//            row.createCell(i).setCellValue(GradeEnumForExport.getItemName(i));
+//        }
+        for (Map.Entry<Integer, String> entry : itemKeyMap.entrySet()) {
+            row.createCell(entry.getKey() + 1).setCellValue(entry.getValue());
         }
         List<GradeView> exportList = gradeMapper.getExportList(semesterId);
         Map<String, List<GradeView>> exportListGroup = exportList.stream().collect(Collectors.groupingBy(GradeView::getJobNumber));
@@ -251,7 +261,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             row.createCell(0).setCellValue(entry.getKey());
             row.createCell(1).setCellValue(entry.getValue().get(0).getName());
             for (GradeView gradeView : entry.getValue()) {
-                row.createCell(GradeEnumForExport.getIndex(gradeView.getItemName() == null ? "" : gradeView.getItemName())).setCellValue(transferName(gradeView.getGrade(), gradeView.getItemName() == null ? "" : gradeView.getItemName()));
+                if (!StringUtils.isEmpty(gradeView.getItemName()) && null != itemMap.get(gradeView.getItemName())) {
+                    row.createCell(itemMap.get(gradeView.getItemName()) + 1).setCellValue(transferName(gradeView.getGrade(), gradeView.getItemName() == null ? "" : gradeView.getItemName()));
+                }
             }
         }
         return wb;
