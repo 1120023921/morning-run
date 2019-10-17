@@ -13,6 +13,7 @@
         <result column="right_ametropia" property="rightAmetropia"/>
         <result column="status" property="status"/>
         <result column="user_id" property="userId"/>
+        <result column="name" property="name"/>
     </resultMap>
 
 </mapper>

@@ -8,7 +8,6 @@ import cn.doublehh.sport.model.Eye;
 import cn.doublehh.sport.service.EyeService;
 import com.baomidou.mybatisplus.extension.api.R;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -32,9 +31,9 @@ public class EyeController {
         return R.restResult(eyeService.insertEye(eye), ErrorCodeInfo.SUCCESS);
     }
 
+    @NeedPermission(roleIds = {"admin", "teacher"})
     @PostMapping("/queryEye")
     public R queryEye(Integer pageNum, Integer pageSize, @RequestBody Eye eye) {
-        eye.setUserId(DesUtil.decrypt(eye.getUserId()));
         return R.restResult(eyeService.queryEye(pageNum, pageSize, eye), ErrorCodeInfo.SUCCESS);
     }
 

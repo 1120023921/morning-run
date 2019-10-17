@@ -3,10 +3,12 @@ package cn.doublehh.sport.service.impl;
 import cn.doublehh.sport.model.Eye;
 import cn.doublehh.sport.dao.EyeMapper;
 import cn.doublehh.sport.service.EyeService;
+import cn.doublehh.system.service.TSUserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -23,10 +25,14 @@ import java.util.UUID;
 @Service
 public class EyeServiceImpl extends ServiceImpl<EyeMapper, Eye> implements EyeService {
 
+    @Autowired
+    private TSUserService userService;
+
     @Override
     public Boolean insertEye(Eye eye) {
         if (StringUtils.isEmpty(eye.getId())) {
             eye.setId(UUID.randomUUID().toString());
+            eye.setName(userService.getUserByUid(eye.getUserId()).getName());
             return save(eye);
         } else {
             eye.setStatus(0);

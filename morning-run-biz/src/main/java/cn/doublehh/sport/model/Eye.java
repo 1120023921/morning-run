@@ -61,6 +61,11 @@ public class Eye implements Serializable {
      */
     private String userId;
 
+    /**
+     * 用户姓名
+     */
+    private String name;
+
     public String getId() {
         return id;
     }
@@ -131,6 +136,14 @@ public class Eye implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
