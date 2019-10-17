@@ -49,7 +49,7 @@ public class LogInfoServiceImpl extends ServiceImpl<LogInfoMapper, LogInfo> impl
     }
 
     @Override
-    public List<LogInfo> getTodayLog() {
+    public Long getTodayLog() {
         log.info("LogInfoServiceImpl [getTodayLog] 获取当天访问日志");
         return logInfoMapper.getTodayLog(LocalDate.now().toString(), LocalDate.now().plusDays(1L).toString());
     }

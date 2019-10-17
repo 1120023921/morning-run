@@ -21,5 +21,5 @@ public interface LogInfoMapper extends BaseMapper<LogInfo> {
      *
      * @return 日志列表
      */
-    List<LogInfo> getTodayLog(@Param("today") String today, @Param("tomorrow") String tomorrow);
+    Long getTodayLog(@Param("today") String today, @Param("tomorrow") String tomorrow);
 }

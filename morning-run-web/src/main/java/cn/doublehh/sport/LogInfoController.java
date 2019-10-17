@@ -54,12 +54,8 @@ public class LogInfoController {
         if (null != todayLogNum) {
             return R.restResult(todayLogNum, ErrorCodeInfo.SUCCESS);
         } else {
-            int num = 0;
-            List<LogInfo> logInfoList = logInfoService.getTodayLog();
-            if (!CollectionUtils.isEmpty(logInfoList)) {
-                num = logInfoList.size();
-                redisTemplate.opsForValue().set("todayLogNum", num, 600L, TimeUnit.SECONDS);
-            }
+            Long num = logInfoService.getTodayLog();
+            redisTemplate.opsForValue().set("todayLogNum", num, 600L, TimeUnit.SECONDS);
             return R.restResult(num, ErrorCodeInfo.SUCCESS);
         }
     }
@@ -75,12 +71,8 @@ public class LogInfoController {
         if (null != todayLogNum) {
             return R.restResult(todayLogNum, ErrorCodeInfo.SUCCESS);
         } else {
-            int num = 0;
-            List<LogInfo> logInfoList = logInfoService.findAll();
-            if (!CollectionUtils.isEmpty(logInfoList)) {
-                num = logInfoList.size();
-                redisTemplate.opsForValue().set("allLogNum", num, 600L, TimeUnit.SECONDS);
-            }
+            int num = logInfoService.count(new QueryWrapper<>());
+            redisTemplate.opsForValue().set("allLogNum", num, 600L, TimeUnit.SECONDS);
             return R.restResult(num, ErrorCodeInfo.SUCCESS);
         }
     }

@@ -30,7 +30,7 @@ public interface LogInfoService extends IService<LogInfo> {
      *
      * @return 日志列表
      */
-    List<LogInfo> getTodayLog();
+    Long getTodayLog();
 
     /**
      * 获取所有日志
