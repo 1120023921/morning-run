@@ -27,8 +27,8 @@
         id, user_id, uri, ip, create_time, user_agent, device, operate_system, address, version,
         update_time, is_valid, is_sync, browser, browser_version, kernel, language, description
     </sql>
-    <select id="getTodayLog" resultType="cn.doublehh.sport.model.LogInfo" parameterType="java.lang.String">
-        SELECT
+    <select id="getTodayLog" resultType="java.lang.Long" parameterType="java.lang.String">
+        SELECT count(1)
         <include refid="BaseSql"/>
         FROM log_info WHERE create_time >= #{today} AND create_time &lt; #{tomorrow}
     </select>
